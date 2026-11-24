@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FalconMM Inbox</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="head">
+      <span class="brand"><span class="dot"></span>FalconMM</span>
+      <span id="conn" class="conn"><span class="dot" id="connDot"></span><span id="connText">未连接</span></span>
+      <button id="downloader" class="icon" title="视频下载器" aria-label="视频下载器">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+      </button>
+      <button id="gear" class="icon" title="在桌面应用中管理插件" aria-label="设置">⚙</button>
+      <button id="close" class="icon" title="关闭" aria-label="关闭">×</button>
+    </header>
+
+    <div class="pageinfo">
+      <div class="origin mono" id="origin">—</div>
+      <div class="counts" id="counts">正在读取当前页…</div>
+    </div>
+
+    <section id="queueWarn" class="warn" hidden></section>
+
+    <main id="content" class="content"></main>
+
+    <footer id="actions" class="actions"></footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
