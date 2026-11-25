@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>دليل استخدام FalconMM</title>
+<style>
+  :root { color-scheme: light; }
+  body { font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; background: #f6f7f9; color: #1c1e21; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { font-size: 26px; } h2 { font-size: 20px; margin-top: 40px; border-bottom: 1px solid #e2e4e8; padding-bottom: 6px; } h3 { font-size: 16px; }
+  .lang-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
+  .lang-nav a { display: inline-block; padding: 4px 10px; border-radius: 14px; background: #fff; border: 1px solid #d9dce1; color: #1c1e21; text-decoration: none; font-size: 13px; }
+  .lang-nav a:hover { border-color: #8a5cf6; color: #6d3ef0; }
+  section { background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; padding: 20px 24px; margin-top: 18px; }
+  code { background: #f0f1f4; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  kbd { background: #eef0f3; border: 1px solid #d0d3d9; border-bottom-width: 2px; border-radius: 4px; padding: 0 6px; font-size: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid #e2e4e8; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #f7f8fa; }
+  .note { background: #fff8e6; border: 1px solid #f0dfa8; border-radius: 8px; padding: 10px 14px; font-size: 14px; }
+  .toc a { color: #6d3ef0; }
+  [dir="rtl"] section { text-align: right; }
+
+  .lang-nav a[aria-current='page'] { border-color: #6d3ef0; color: #6d3ef0; font-weight: 600; }
+  .version-line { color: #5b6270; font-size: 14px; margin: 6px 0 0; }
+  .version-line a { color: #6d3ef0; }
+  code, kbd { unicode-bidi: isolate; direction: ltr; }
+  html[dir='rtl'] .wrap { text-align: right; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-top: 18px; }
+  .cards a { display: block; background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; padding: 14px 16px; text-decoration: none; color: #1c1e21; }
+  .cards a:hover { border-color: #8a5cf6; }
+  .cards b { display: block; font-size: 17px; }
+  .cards span { display: block; color: #5b6270; font-size: 13px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="lang-nav" aria-label="Language">
+  <a href="UserGuide.zh-CN.html" hreflang="zh-CN">简体中文</a>
+  <a href="UserGuide.zh-TW.html" hreflang="zh-TW">繁體中文</a>
+  <a href="UserGuide.en.html" hreflang="en">English</a>
+  <a href="UserGuide.ja.html" hreflang="ja">日本語</a>
+  <a href="UserGuide.ko.html" hreflang="ko">한국어</a>
+  <a href="UserGuide.fr.html" hreflang="fr">Français</a>
+  <a href="UserGuide.de.html" hreflang="de">Deutsch</a>
+  <a href="UserGuide.es.html" hreflang="es">Español</a>
+  <a href="UserGuide.pt.html" hreflang="pt">Português</a>
+  <a href="UserGuide.ru.html" hreflang="ru">Русский</a>
+  <a href="UserGuide.ar.html" hreflang="ar" aria-current="page">العربية</a>
+</nav>
+<h1>دليل استخدام FalconMM</h1>
+<p>FalconMM مكتبة وسائط تعمل محليًا أولًا: تمرّ لقطات الشاشة وتسجيلاتها والتقاطات المتصفح عبر صندوق الوارد للمراجعة، وتنظّم شجرة الوسوم المواد، ويمكن اختياريًا لنموذج رؤية (VLM) أن يضع الوسوم تلقائيًا، ويتيح MCP للمساعدين الذكيين البحث في المكتبة.</p>
+<p class="version-line">العربية · v0.4.0 · <a href="https://github.com/darker2016/FalconMMRelease/releases">التنزيلات</a> · <a href="UserGuide.html">جميع اللغات</a></p>
+<h3>1. التثبيت</h3>
+<ul>
+  <li><b>macOS</b>: نزّل <code>FalconMM-0.4.0-arm64.dmg</code> (معالجات Apple) أو <code>FalconMM-0.4.0-x64.dmg</code> (Intel)، ثم افتح الملف واسحب FalconMM إلى مجلد «التطبيقات». النسخة غير موثّقة، فعند أول تشغيل انقر بزر الفأرة الأيمن ← <b>فتح</b> عندما يطلب macOS ذلك (أو من «إعدادات النظام ← الخصوصية والأمان» انقر «فتح على أي حال»).</li>
+  <li><b>Windows</b>: نزّل <code>FalconMM-Setup-0.4.0.exe</code> واتبع خطوات معالج الإعداد.</li>
+  <li>عند أول تشغيل يُنشأ مجلد المكتبة (افتراضيًا <code>~/Documents/FalconMM素材库</code>)، وتبقى قاعدة البيانات والملفات على جهازك محليًا.</li>
+</ul>
+<h3>2. لغة الواجهة</h3>
+<p>يتبع التطبيق افتراضيًا <b>لغة النظام</b> (11 لغة: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). يمكنك التبديل في أي وقت من <b>الإعدادات ← عام وتحديثات ← اللغة</b>؛ وتُعرض العربية باتجاه من اليمين إلى اليسار.</p>
+<h3>3. تحديثات البرنامج</h3>
+<ul>
+  <li>يتحقق التطبيق افتراضيًا عند بدء التشغيل من أحدث إصدار في مستودع الإصدارات (github.com/darker2016/FalconMMRelease)، ويمكن تعطيل ذلك من الإعدادات.</li>
+  <li><b>Windows</b>: بعد اكتمال التنزيل انقر «تثبيت التحديث»، فيغلق المُثبِّت التطبيق ويحدّثه في مكانه مع الاحتفاظ بجميع البيانات والإعدادات.</li>
+  <li><b>macOS</b>: انقر «تثبيت التحديث» ليُفتح ملف DMG الذي نُزِّل، ثم اسحب FalconMM إلى «التطبيقات» ليحل محله؛ يُحتفظ بالاقتران والبيانات.</li>
+</ul>
+<h3>4. إضافة المتصفح</h3>
+<ol>
+  <li>نزّل <code>FalconMM-Extension-0.4.0.zip</code> و<b>فكّ ضغطه</b>. افتح <code>chrome://extensions</code> (وفي Edge: <code>edge://extensions</code>)، وفعّل «وضع المطوّر» ← «تحميل إضافة غير مضغوطة» ← اختر مجلد <code>extension</code> بعد فك الضغط.</li>
+  <li>انقر أيقونة الإضافة واقترنها مع FalconMM وفق التعليمات (الإعدادات ← إضافة المتصفح ← إنشاء رمز الاقتران).</li>
+  <li>افتح النافذة المنبثقة على أي صفحة لالتقاط الصور / الفيديوهات إلى صندوق الوارد؛ وفي المواقع المدعومة يمكنك النقر على «تنزيل الفيديو الحالي».</li>
+</ol>
+<p><b>المواقع المدعومة</b>: Bilibili وDouyin وXiaohongshu (RedNote) وYouTube وTikTok وX (Twitter) وInstagram وVimeo. تتطلب المواقع الدولية أن تتمكن شبكتك من الوصول إليها؛ ولا يتوفر لـ YouTube / TikTok / X / Instagram / Vimeo بديل عبر Tampermonkey، ويظهر عند التعذر سبب واضح ومحدد. أما IQiYi / Youku / Tencent Video / MangoTV فهي محمية بحقوق النشر (DRM) ولا يُتاح تنزيلها.</p>
+<h3>5. الوظائف اليومية</h3>
+<ul>
+  <li><b>لقطة الشاشة / التسجيل</b>: <kbd>⌘/Ctrl+Shift+U</kbd> لقطة شاشة، و<kbd>⌘/Ctrl+Shift+K</kbd> تسجيل الشاشة (يمكن تغيير الاختصارات من الإعدادات)، وتذهب النتائج مباشرة إلى صندوق الوارد.</li>
+  <li><b>صندوق الوارد</b>: راجع العناصر واحدة تلو الأخرى أو دفعة واحدة «وسمها ← أرشفتها»؛ الأرشفة تغيّر الحالة فقط دون نقل الملفات الأصلية ويمكن التراجع عنها.</li>
+  <li><b>شجرة الوسوم</b>: انقر الوسوم في الشجرة الجانبية لتصفية المواد؛ «غير المصنّف» عقدة نظامية؛ والعمليات المتقدمة تجري في صفحة «إدارة الوسوم».</li>
+  <li><b>الوسم بالذكاء الاصطناعي (اختياري)</b>: الإعدادات ← الوسم بالذكاء الاصطناعي، ويمكن إضافة أي نقطة نهاية متوافقة مع OpenAI أو Ollama محلي؛ وعدم الإعداد لا يؤثر على بقية الوظائف. تظهر نتائج التعرف أولًا كـ«اقتراحات» ولا تُكتب وسومًا رسمية إلا بعد تأكيدها.</li>
+  <li><b>استيراد مكتبات الأطراف الأخرى</b>: الإعدادات ← أمان البيانات ← استيراد من الأطراف الأخرى (Eagle / Billfish / digiKam)؛ تُقرأ المكتبة الأصلية دون تعديل وتُنسخ المواد إلى المكتبة.</li>
+  <li><b>MCP</b>: الإعدادات ← MCP، ويتيح ذلك لمساعدي الذكاء الاصطناعي على سطح المكتب مثل Claude البحث عن موادك عبر MCP.</li>
+</ul>
+<h3>6. تطوير الإضافات</h3>
+<p>يُنشر الكود المصدري للإضافة ودليل المطوّر في مستودع الإصدارات نفسه (مجلد <code>extension-source/</code>، وبه <code>DEVELOPER.md</code>). لإضافة موقع جديد يكفي تعديل الإضافة فقط: سجل المواقع + دالة التحليل + محلّل الصفحة (resolver)؛ فعند المصافحة (handshake) تُبلّغ الإضافة الموقعَ الجديد تلقائيًا إلى تطبيق سطح المكتب للسماح بتنزيله، دون أي تعديل على تطبيق سطح المكتب. راجع <code>DEVELOPER.md</code> لمزيد من التفاصيل.</p>
+<h3>7. الأسئلة الشائعة</h3>
+<ul>
+  <li><b>فشل التنزيل / ملف فارغ</b>: روابط المواقع عادة موقّعة وقصيرة الأجل، فحدّث الصفحة أولًا ثم انقر التنزيل؛ وإذا استمر الفشل فاطلع من رسالة الخطأ على السبب المحدد.</li>
+  <li><b>«التطبيق تالف»</b> (macOS): سببها أن ملف التثبيت غير موثّق؛ يكفي فتحه مرة واحدة بالنقر بزر الفأرة الأيمن ← فتح، وبعدها يُكمل التطبيق التحقق الذاتي تلقائيًا.</li>
+  <li><b>فشل التحقق من التحديثات</b>: يتطلب الوصول إلى <code>api.github.com</code>؛ وإذا كانت الشبكة مقيّدة فأعد المحاولة لاحقًا.</li>
+</ul>
+
+</div>
+</body>
+</html>

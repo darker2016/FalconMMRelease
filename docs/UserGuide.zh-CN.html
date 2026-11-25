@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FalconMM 使用说明</title>
+<style>
+  :root { color-scheme: light; }
+  body { font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; background: #f6f7f9; color: #1c1e21; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { font-size: 26px; } h2 { font-size: 20px; margin-top: 40px; border-bottom: 1px solid #e2e4e8; padding-bottom: 6px; } h3 { font-size: 16px; }
+  .lang-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
+  .lang-nav a { display: inline-block; padding: 4px 10px; border-radius: 14px; background: #fff; border: 1px solid #d9dce1; color: #1c1e21; text-decoration: none; font-size: 13px; }
+  .lang-nav a:hover { border-color: #8a5cf6; color: #6d3ef0; }
+  section { background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; padding: 20px 24px; margin-top: 18px; }
+  code { background: #f0f1f4; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  kbd { background: #eef0f3; border: 1px solid #d0d3d9; border-bottom-width: 2px; border-radius: 4px; padding: 0 6px; font-size: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid #e2e4e8; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #f7f8fa; }
+  .note { background: #fff8e6; border: 1px solid #f0dfa8; border-radius: 8px; padding: 10px 14px; font-size: 14px; }
+  .toc a { color: #6d3ef0; }
+  [dir="rtl"] section { text-align: right; }
+
+  .lang-nav a[aria-current='page'] { border-color: #6d3ef0; color: #6d3ef0; font-weight: 600; }
+  .version-line { color: #5b6270; font-size: 14px; margin: 6px 0 0; }
+  .version-line a { color: #6d3ef0; }
+  code, kbd { unicode-bidi: isolate; direction: ltr; }
+  html[dir='rtl'] .wrap { text-align: right; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-top: 18px; }
+  .cards a { display: block; background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; padding: 14px 16px; text-decoration: none; color: #1c1e21; }
+  .cards a:hover { border-color: #8a5cf6; }
+  .cards b { display: block; font-size: 17px; }
+  .cards span { display: block; color: #5b6270; font-size: 13px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="lang-nav" aria-label="Language">
+  <a href="UserGuide.zh-CN.html" hreflang="zh-CN" aria-current="page">简体中文</a>
+  <a href="UserGuide.zh-TW.html" hreflang="zh-TW">繁體中文</a>
+  <a href="UserGuide.en.html" hreflang="en">English</a>
+  <a href="UserGuide.ja.html" hreflang="ja">日本語</a>
+  <a href="UserGuide.ko.html" hreflang="ko">한국어</a>
+  <a href="UserGuide.fr.html" hreflang="fr">Français</a>
+  <a href="UserGuide.de.html" hreflang="de">Deutsch</a>
+  <a href="UserGuide.es.html" hreflang="es">Español</a>
+  <a href="UserGuide.pt.html" hreflang="pt">Português</a>
+  <a href="UserGuide.ru.html" hreflang="ru">Русский</a>
+  <a href="UserGuide.ar.html" hreflang="ar">العربية</a>
+</nav>
+<h1>FalconMM 使用说明</h1>
+<p>FalconMM 是一个本地优先的素材库应用：截屏 / 录屏 / 浏览器抓取进入收件箱审核，标签树整理素材，可选接入视觉模型（VLM）自动打标签，并通过 MCP 供 AI 助手检索。</p>
+<p class="version-line">简体中文 · v0.4.0 · <a href="https://github.com/darker2016/FalconMMRelease/releases">下载安装包</a> · <a href="UserGuide.html">全部语言</a></p>
+<h3>1. 安装</h3>
+<ul>
+  <li><b>macOS</b>：下载 <code>FalconMM-0.4.0-arm64.dmg</code>（Apple 芯片）或 <code>FalconMM-0.4.0-x64.dmg</code>（Intel 芯片），打开后把 FalconMM 拖入「应用程序」。安装包未做公证，首次打开请在系统提示时<b>右键 → 打开</b>（或在「系统设置 → 隐私与安全性」点击「仍要打开」）。</li>
+  <li><b>Windows</b>：下载 <code>FalconMM-Setup-0.4.0.exe</code>，按向导安装。</li>
+  <li>首次启动会创建素材库目录（默认 <code>~/Documents/FalconMM素材库</code>），数据库与素材都保存在本机。</li>
+</ul>
+<h3>2. 界面语言</h3>
+<p>安装后默认<b>跟随系统语言</b>（支持 11 种：简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية）。可随时在 <b>设置 → 通用与更新 → 界面语言</b> 切换；阿拉伯语为从右到左布局。</p>
+<h3>3. 软件更新</h3>
+<ul>
+  <li>应用默认在启动时自动检查发布库（github.com/darker2016/FalconMMRelease）的最新版本，可在设置里关闭。</li>
+  <li><b>Windows</b>：下载完成后点「安装更新」，安装器会自动关闭应用并完成升级（保留所有数据与设置）。</li>
+  <li><b>macOS</b>：下载完成后点「安装更新」会打开 DMG 安装包，把 FalconMM 拖入「应用程序」替换即可；配对与数据保留。</li>
+</ul>
+<h3>4. 浏览器插件</h3>
+<ol>
+  <li>下载 <code>FalconMM-Extension-0.4.0.zip</code> 并<b>解压</b>；打开 <code>chrome://extensions</code>（Edge: <code>edge://extensions</code>），开启「开发者模式」→「加载已解压的扩展程序」→ 选择解压后的 <code>extension</code> 目录。</li>
+  <li>点击扩展图标，按提示与 FalconMM 配对（设置 → 浏览器插件 → 生成配对码）。</li>
+  <li>在网页上打开弹窗即可抓取图片 / 视频到收件箱；受支持站点的视频可点「直接下载」。</li>
+</ol>
+<p><b>支持的站点</b>：哔哩哔哩、抖音、小红书、YouTube、TikTok、X (Twitter)、Instagram、 Vimeo。国际站点需要你的网络可以访问对应站点；YouTube / TikTok / X / Instagram / Vimeo 没有 Tampermonkey 兜底脚本，解析失败会给出明确原因。爱奇艺 / 优酷 / 腾讯视频 / 芒果TV 受版权保护（DRM），不做下载。</p>
+<h3>5. 常用功能</h3>
+<ul>
+  <li><b>截屏 / 录屏</b>：<kbd>⌘/Ctrl+Shift+U</kbd> 截图、<kbd>⌘/Ctrl+Shift+K</kbd> 录屏（可在设置改键），产物直接进入收件箱。</li>
+  <li><b>收件箱</b>：逐项或批量「打标签 → 归档」；归档只改状态不移动原文件，可撤销。</li>
+  <li><b>标签树</b>：左侧树点选过滤素材；「未归类」是系统节点；复杂操作在「标签管理」页。</li>
+  <li><b>AI 打标签（可选）</b>：设置 → AI 识别，添加任意 OpenAI 兼容端点或本地 Ollama；未配置不影响其他功能。识别结果默认为「建议态」，确认后才写入正式标签。</li>
+  <li><b>第三方素材库导入</b>：设置 → 数据安全 → 第三方导入（Eagle / Billfish / digiKam），只读原库并复制入库。</li>
+  <li><b>MCP</b>：设置 → MCP，可让 Claude 等桌面 AI 通过 MCP 检索素材。</li>
+</ul>
+<h3>6. 插件开发</h3>
+<p>插件源码与开发者指南发布在同一发布库（<code>extension-source/</code> 目录，含 <code>DEVELOPER.md</code>）。新增站点只需修改插件：站点注册表 + 解析函数 + 页面 resolver；插件握手时会自动把新站点上报给桌面端放行下载，无需修改桌面端。详见 <code>DEVELOPER.md</code>。</p>
+<h3>7. 常见问题</h3>
+<ul>
+  <li><b>下载失败 / 空文件</b>：站点地址常带签名与时效，先刷新页面再点下载；仍失败请看错误提示的具体原因。</li>
+  <li><b>「应用已损坏」</b>（macOS）：安装包未公证所致，右键打开一次即可；应用随后会自动完成自签校验。</li>
+  <li><b>检查更新失败</b>：需要能访问 <code>api.github.com</code>；网络受限时稍后重试。</li>
+</ul>
+
+</div>
+</body>
+</html>

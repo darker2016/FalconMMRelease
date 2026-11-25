@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FalconMM 使用说明 / User Guide</title>
+<title>FalconMM 使用说明 · User Guide</title>
 <style>
   :root { color-scheme: light; }
   body { font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; background: #f6f7f9; color: #1c1e21; }
@@ -21,489 +21,50 @@
   .note { background: #fff8e6; border: 1px solid #f0dfa8; border-radius: 8px; padding: 10px 14px; font-size: 14px; }
   .toc a { color: #6d3ef0; }
   [dir="rtl"] section { text-align: right; }
+
+  .lang-nav a[aria-current='page'] { border-color: #6d3ef0; color: #6d3ef0; font-weight: 600; }
+  .version-line { color: #5b6270; font-size: 14px; margin: 6px 0 0; }
+  .version-line a { color: #6d3ef0; }
+  code, kbd { unicode-bidi: isolate; direction: ltr; }
+  html[dir='rtl'] .wrap { text-align: right; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-top: 18px; }
+  .cards a { display: block; background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; padding: 14px 16px; text-decoration: none; color: #1c1e21; }
+  .cards a:hover { border-color: #8a5cf6; }
+  .cards b { display: block; font-size: 17px; }
+  .cards span { display: block; color: #5b6270; font-size: 13px; margin-top: 4px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-
-<h1>FalconMM 使用说明 · User Guide · v0.4.0</h1>
-<p>FalconMM 是一个本地优先的素材库应用：截屏 / 录屏 / 浏览器抓取进入收件箱审核，标签树整理素材，可选接入视觉模型（VLM）自动打标签，并通过 MCP 供 AI 助手检索。</p>
-<div class="lang-nav">
-  <a href="#zh-CN">简体中文</a><a href="#zh-TW">繁體中文</a><a href="#en">English</a><a href="#ja">日本語</a><a href="#ko">한국어</a><a href="#fr">Français</a><a href="#de">Deutsch</a><a href="#es">Español</a><a href="#pt">Português</a><a href="#ru">Русский</a><a href="#ar">العربية</a>
+<nav class="lang-nav" aria-label="Language">
+  <a href="UserGuide.zh-CN.html" hreflang="zh-CN">简体中文</a>
+  <a href="UserGuide.zh-TW.html" hreflang="zh-TW">繁體中文</a>
+  <a href="UserGuide.en.html" hreflang="en">English</a>
+  <a href="UserGuide.ja.html" hreflang="ja">日本語</a>
+  <a href="UserGuide.ko.html" hreflang="ko">한국어</a>
+  <a href="UserGuide.fr.html" hreflang="fr">Français</a>
+  <a href="UserGuide.de.html" hreflang="de">Deutsch</a>
+  <a href="UserGuide.es.html" hreflang="es">Español</a>
+  <a href="UserGuide.pt.html" hreflang="pt">Português</a>
+  <a href="UserGuide.ru.html" hreflang="ru">Русский</a>
+  <a href="UserGuide.ar.html" hreflang="ar">العربية</a>
+</nav>
+<h1>FalconMM 使用说明 · User Guide</h1>
+<p>请选择语言 / Choose your language. 使用说明覆盖安装、界面语言、软件更新、浏览器插件、常用功能、插件开发与常见问题。</p>
+<p class="version-line">v0.4.0 · <a href="https://github.com/darker2016/FalconMMRelease/releases">下载安装包 / Downloads</a></p>
+<div class="cards">
+  <a href="UserGuide.zh-CN.html" hreflang="zh-CN" lang="zh-CN"><b>简体中文</b><span>FalconMM 使用说明</span></a>
+  <a href="UserGuide.zh-TW.html" hreflang="zh-TW" lang="zh-TW"><b>繁體中文</b><span>FalconMM 使用說明</span></a>
+  <a href="UserGuide.en.html" hreflang="en" lang="en"><b>English</b><span>FalconMM User Guide</span></a>
+  <a href="UserGuide.ja.html" hreflang="ja" lang="ja"><b>日本語</b><span>FalconMM ご利用ガイド</span></a>
+  <a href="UserGuide.ko.html" hreflang="ko" lang="ko"><b>한국어</b><span>FalconMM 사용 가이드</span></a>
+  <a href="UserGuide.fr.html" hreflang="fr" lang="fr"><b>Français</b><span>Guide d’utilisation FalconMM</span></a>
+  <a href="UserGuide.de.html" hreflang="de" lang="de"><b>Deutsch</b><span>FalconMM Benutzerhandbuch</span></a>
+  <a href="UserGuide.es.html" hreflang="es" lang="es"><b>Español</b><span>Guía de usuario de FalconMM</span></a>
+  <a href="UserGuide.pt.html" hreflang="pt" lang="pt"><b>Português</b><span>Guia do usuário do FalconMM</span></a>
+  <a href="UserGuide.ru.html" hreflang="ru" lang="ru"><b>Русский</b><span>Руководство пользователя FalconMM</span></a>
+  <a href="UserGuide.ar.html" hreflang="ar" lang="ar"><b>العربية</b><span>دليل استخدام FalconMM</span></a>
 </div>
-
-<!-- ═══════════════ 简体中文 ═══════════════ -->
-<section id="zh-CN" lang="zh-CN">
-<h2>简体中文</h2>
-<h3>1. 安装</h3>
-<ul>
-  <li><b>macOS</b>：下载 <code>FalconMM-0.4.0-arm64.dmg</code>（Apple 芯片）或 <code>FalconMM-0.4.0-x64.dmg</code>（Intel 芯片），打开后把 FalconMM 拖入「应用程序」。安装包未做公证，首次打开请在系统提示时<b>右键 → 打开</b>（或在「系统设置 → 隐私与安全性」点击「仍要打开」）。</li>
-  <li><b>Windows</b>：下载 <code>FalconMM-Setup-0.4.0.exe</code>，按向导安装。</li>
-  <li>首次启动会创建素材库目录（默认 <code>~/Documents/FalconMM素材库</code>），数据库与素材都保存在本机。</li>
-</ul>
-<h3>2. 界面语言</h3>
-<p>安装后默认<b>跟随系统语言</b>（支持 11 种：简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية）。可随时在 <b>设置 → 通用与更新 → 界面语言</b> 切换；阿拉伯语为从右到左布局。</p>
-<h3>3. 软件更新</h3>
-<ul>
-  <li>应用默认在启动时自动检查发布库（github.com/darker2016/FalconMMRelease）的最新版本，可在设置里关闭。</li>
-  <li><b>Windows</b>：下载完成后点「安装更新」，安装器会自动关闭应用并完成升级（保留所有数据与设置）。</li>
-  <li><b>macOS</b>：下载完成后点「安装更新」会打开 DMG 安装包，把 FalconMM 拖入「应用程序」替换即可；配对与数据保留。</li>
-</ul>
-<h3>4. 浏览器插件</h3>
-<ol>
-  <li>下载 <code>FalconMM-Extension-0.4.0.zip</code> 并<b>解压</b>；打开 <code>chrome://extensions</code>（Edge: <code>edge://extensions</code>），开启「开发者模式」→「加载已解压的扩展程序」→ 选择解压后的 <code>extension</code> 目录。</li>
-  <li>点击扩展图标，按提示与 FalconMM 配对（设置 → 浏览器插件 → 生成配对码）。</li>
-  <li>在网页上打开弹窗即可抓取图片 / 视频到收件箱；受支持站点的视频可点「直接下载」。</li>
-</ol>
-<p><b>支持的站点</b>：哔哩哔哩、抖音、小红书、YouTube、TikTok、X (Twitter)、Instagram、 Vimeo。国际站点需要你的网络可以访问对应站点；YouTube / TikTok / X / Instagram / Vimeo 没有 Tampermonkey 兜底脚本，解析失败会给出明确原因。爱奇艺 / 优酷 / 腾讯视频 / 芒果TV 受版权保护（DRM），不做下载。</p>
-<h3>5. 常用功能</h3>
-<ul>
-  <li><b>截屏 / 录屏</b>：<kbd>⌘/Ctrl+Shift+U</kbd> 截图、<kbd>⌘/Ctrl+Shift+K</kbd> 录屏（可在设置改键），产物直接进入收件箱。</li>
-  <li><b>收件箱</b>：逐项或批量「打标签 → 归档」；归档只改状态不移动原文件，可撤销。</li>
-  <li><b>标签树</b>：左侧树点选过滤素材；「未归类」是系统节点；复杂操作在「标签管理」页。</li>
-  <li><b>AI 打标签（可选）</b>：设置 → AI 识别，添加任意 OpenAI 兼容端点或本地 Ollama；未配置不影响其他功能。识别结果默认为「建议态」，确认后才写入正式标签。</li>
-  <li><b>第三方素材库导入</b>：设置 → 数据安全 → 第三方导入（Eagle / Billfish / digiKam），只读原库并复制入库。</li>
-  <li><b>MCP</b>：设置 → MCP，可让 Claude 等桌面 AI 通过 MCP 检索素材。</li>
-</ul>
-<h3>6. 插件开发</h3>
-<p>插件源码与开发者指南发布在同一发布库（<code>extension-source/</code> 目录，含 <code>DEVELOPER.md</code>）。新增站点只需修改插件：站点注册表 + 解析函数 + 页面 resolver；插件握手时会自动把新站点上报给桌面端放行下载，无需修改桌面端。详见 <code>DEVELOPER.md</code>。</p>
-<h3>7. 常见问题</h3>
-<ul>
-  <li><b>下载失败 / 空文件</b>：站点地址常带签名与时效，先刷新页面再点下载；仍失败请看错误提示的具体原因。</li>
-  <li><b>「应用已损坏」</b>（macOS）：安装包未公证所致，右键打开一次即可；应用随后会自动完成自签校验。</li>
-  <li><b>检查更新失败</b>：需要能访问 <code>api.github.com</code>；网络受限时稍后重试。</li>
-</ul>
-</section>
-
-<!-- ═══════════════ English ═══════════════ -->
-<section id="en" lang="en">
-<h2>English</h2>
-<h3>1. Install</h3>
-<ul>
-  <li><b>macOS</b>: download <code>FalconMM-0.4.0-arm64.dmg</code> (Apple silicon) or <code>FalconMM-0.4.0-x64.dmg</code> (Intel), open it and drag FalconMM into <i>Applications</i>. The build is not notarized; on first launch right-click → <i>Open</i> when macOS asks (or use System Settings → Privacy &amp; Security → Open Anyway).</li>
-  <li><b>Windows</b>: download <code>FalconMM-Setup-0.4.0.exe</code> and follow the wizard.</li>
-  <li>On first launch a library folder is created (default <code>~/Documents/FalconMM素材库</code>); the database and assets stay on your machine.</li>
-</ul>
-<h3>2. Interface language</h3>
-<p>The app follows your <b>system language</b> by default (11 languages: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). Switch any time in <b>Settings → General &amp; Updates → Language</b>; Arabic uses a right-to-left layout.</p>
-<h3>3. Software updates</h3>
-<ul>
-  <li>By default the app checks the release repository (github.com/darker2016/FalconMMRelease) at startup; this can be disabled in Settings.</li>
-  <li><b>Windows</b>: click <i>Install update</i> after download — the installer closes the app and upgrades in place, keeping all data and settings.</li>
-  <li><b>macOS</b>: click <i>Install update</i> to open the downloaded DMG, then drag FalconMM into <i>Applications</i> to replace it. Pairing and data are preserved.</li>
-</ul>
-<h3>4. Browser extension</h3>
-<ol>
-  <li>Download <code>FalconMM-Extension-0.4.0.zip</code> and <b>unzip</b> it. Open <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>), enable <i>Developer mode</i> → <i>Load unpacked</i> → pick the unzipped <code>extension</code> folder.</li>
-  <li>Click the extension icon and pair it with FalconMM (Settings → Browser extension → Generate pairing code).</li>
-  <li>Open the popup on any page to capture images / videos into the Inbox; on supported sites use <i>Download current video</i>.</li>
-</ol>
-<p><b>Supported sites</b>: Bilibili, Douyin, Xiaohongshu (RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. International sites require that your network can reach them; YouTube / TikTok / X / Instagram / Vimeo have no Tampermonkey fallback — failures come back with a specific reason. IQiYi / Youku / Tencent Video / MangoTV are DRM-protected and not supported for download.</p>
-<h3>5. Everyday features</h3>
-<ul>
-  <li><b>Screenshot / recording</b>: <kbd>⌘/Ctrl+Shift+U</kbd> screenshot, <kbd>⌘/Ctrl+Shift+K</kbd> screen recording (rebindable in Settings); results land in the Inbox.</li>
-  <li><b>Inbox</b>: review items, tag, then <i>Archive</i> (status-only, reversible, originals untouched).</li>
-  <li><b>Tag tree</b>: click tags in the sidebar to filter; "Uncategorized" is a system node; heavy editing lives in Tag management.</li>
-  <li><b>AI tagging (optional)</b>: Settings → AI tagging accepts any OpenAI-compatible endpoint or local Ollama; suggestions stay in a pending state until you apply them.</li>
-  <li><b>Third-party import</b>: Settings → Data safety → import from Eagle / Billfish / digiKam (read-only on the source library).</li>
-  <li><b>MCP</b>: Settings → MCP lets desktop AI assistants such as Claude search your library.</li>
-</ul>
-<h3>6. Extension development</h3>
-<p>Extension source code and a developer guide are published in the same release repository (<code>extension-source/</code>, see <code>DEVELOPER.md</code>). Adding a site only touches the extension — site registry, parser, page resolver — and the extension auto-registers new sites with the desktop app during handshake. No desktop changes needed.</p>
-<h3>7. FAQ</h3>
-<ul>
-  <li><b>Download failed / empty file</b>: site URLs are signed and expire quickly — refresh the page first, then retry; errors always explain the cause.</li>
-  <li><b>"App is damaged"</b> (macOS): caused by the missing notarization; right-click → Open once and the app will finish its own verification.</li>
-  <li><b>Update check failed</b>: requires access to <code>api.github.com</code>; retry later on restricted networks.</li>
-</ul>
-</section>
-
-<!-- ═══════════════ 繁體中文 ═══════════════ -->
-<section id="zh-TW" lang="zh-TW">
-<h2>繁體中文</h2>
-<h3>1. 安裝</h3>
-<ul>
-  <li><b>macOS</b>：下載 <code>FalconMM-0.4.0-arm64.dmg</code>（Apple 晶片）或 <code>FalconMM-0.4.0-x64.dmg</code>（Intel 晶片），打開後把 FalconMM 拖入「應用程式」。安裝檔未做公證，首次開啟請在系統提示時<b>按右鍵 → 打開</b>（或在「系統設定 → 隱私權與安全性」點擊「仍要打開」）。</li>
-  <li><b>Windows</b>：下載 <code>FalconMM-Setup-0.4.0.exe</code>，依安裝精靈指示安裝。</li>
-  <li>首次啟動會建立素材庫資料夾（預設 <code>~/Documents/FalconMM素材库</code>），資料庫與素材都儲存在本機。</li>
-</ul>
-<h3>2. 介面語言</h3>
-<p>安裝後預設<b>跟隨系統語言</b>（支援 11 種：简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية）。可隨時在 <b>設定 → 一般與更新 → 介面語言</b> 切換；阿拉伯語為由右至左版面。</p>
-<h3>3. 軟體更新</h3>
-<ul>
-  <li>應用程式預設會在啟動時自動檢查發布庫（github.com/darker2016/FalconMMRelease）的最新版本，可在設定中關閉。</li>
-  <li><b>Windows</b>：下載完成後點「安裝更新」，安裝程式會自動關閉應用程式並完成升級（保留所有資料與設定）。</li>
-  <li><b>macOS</b>：下載完成後點「安裝更新」會開啟 DMG 安裝檔，把 FalconMM 拖入「應用程式」取代即可；配對與資料都會保留。</li>
-</ul>
-<h3>4. 瀏覽器擴充功能</h3>
-<ol>
-  <li>下載 <code>FalconMM-Extension-0.4.0.zip</code> 並<b>解壓縮</b>；開啟 <code>chrome://extensions</code>（Edge：<code>edge://extensions</code>），開啟「開發人員模式」→「載入未封裝項目」→ 選擇解壓縮後的 <code>extension</code> 資料夾。</li>
-  <li>點擊擴充功能圖示，依提示與 FalconMM 配對（設定 → 瀏覽器擴充功能 → 產生配對碼）。</li>
-  <li>在網頁上開啟彈出視窗即可擷取圖片 / 影片到收件匣；受支援站點的影片可點「直接下載」。</li>
-</ol>
-<p><b>支援的站點</b>：Bilibili、Douyin、Xiaohongshu（RedNote）、YouTube、TikTok、X (Twitter)、Instagram、Vimeo。國際站點需要你的網路可以連上對應網站；YouTube / TikTok / X / Instagram / Vimeo 沒有 Tampermonkey 備援腳本，解析失敗會給出明確原因。IQiYi / Youku / Tencent Video / MangoTV 受版權保護（DRM），不開放下載。</p>
-<h3>5. 常用功能</h3>
-<ul>
-  <li><b>截圖 / 錄影</b>：<kbd>⌘/Ctrl+Shift+U</kbd> 截圖、<kbd>⌘/Ctrl+Shift+K</kbd> 錄影（可在設定變更快捷鍵），產出直接進入收件匣。</li>
-  <li><b>收件匣</b>：逐筆或批次「加標籤 → 歸檔」；歸檔只變更狀態、不搬移原始檔案，可復原。</li>
-  <li><b>標籤樹</b>：點選左側樹狀標籤即可篩選素材；「未分類」是系統節點；複雜操作請到「標籤管理」頁。</li>
-  <li><b>AI 自動標籤（選用）</b>：設定 → AI 辨識，可加入任何 OpenAI 相容端點或本機 Ollama；未設定不影響其他功能。辨識結果預設為「建議狀態」，確認後才會寫入正式標籤。</li>
-  <li><b>第三方素材庫匯入</b>：設定 → 資料安全 → 第三方匯入（Eagle / Billfish / digiKam），僅唯讀原庫並複製入庫。</li>
-  <li><b>MCP</b>：設定 → MCP，可讓 Claude 等桌面 AI 透過 MCP 檢索素材。</li>
-</ul>
-<h3>6. 擴充功能開發</h3>
-<p>擴充功能原始碼與開發者指南發布在同一發布庫（<code>extension-source/</code> 目錄，內含 <code>DEVELOPER.md</code>）。新增站點只需修改擴充功能：站點註冊表 + 解析函式 + 頁面 resolver；擴充功能握手時會自動將新站點回報給桌面端放行下載，無須修改桌面端。詳見 <code>DEVELOPER.md</code>。</p>
-<h3>7. 常見問題</h3>
-<ul>
-  <li><b>下載失敗 / 檔案為空</b>：站點網址常帶簽名與時效，請先重新整理頁面再點下載；仍失敗請查看錯誤提示的具體原因。</li>
-  <li><b>「應用程式已損壞」</b>（macOS）：安裝檔未公證所致，按右鍵開啟一次即可；應用程式之後會自動完成自我簽署驗證。</li>
-  <li><b>檢查更新失敗</b>：需要能連上 <code>api.github.com</code>；網路受限時請稍後再試。</li>
-</ul>
-</section>
-
-<!-- ═══════════════ 日本語 ═══════════════ -->
-<section id="ja" lang="ja">
-<h2>日本語</h2>
-<h3>1. インストール</h3>
-<ul>
-  <li><b>macOS</b>：<code>FalconMM-0.4.0-arm64.dmg</code>（Apple シリコン）または <code>FalconMM-0.4.0-x64.dmg</code>（Intel）をダウンロードして開き、FalconMM を「アプリケーション」へドラッグします。ビルドは公証されていないため、初回起動時に macOS に確認されたら<b>右クリック → 開く</b>を選んでください（または「システム設定 → プライバシーとセキュリティ」で「このまま開く」）。</li>
-  <li><b>Windows</b>：<code>FalconMM-Setup-0.4.0.exe</code> をダウンロードし、ウィザードに従ってインストールします。</li>
-  <li>初回起動時にライブラリフォルダー（既定は <code>~/Documents/FalconMM素材库</code>）が作成され、データベースと素材はすべてこの端末内に保存されます。</li>
-</ul>
-<h3>2. 表示言語</h3>
-<p>既定では<b>システムの言語</b>に従います（11 言語対応：简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية）。「設定 → 一般とアップデート → 言語」からいつでも変更でき、アラビア語は右から左（RTL）のレイアウトになります。</p>
-<h3>3. ソフトウェアアップデート</h3>
-<ul>
-  <li>既定で、起動時にリリースリポジトリ（github.com/darker2016/FalconMMRelease）の最新バージョンを自動確認します。設定でオフにできます。</li>
-  <li><b>Windows</b>：ダウンロード後「アップデートをインストール」をクリックすると、インストーラーがアプリを閉じてその場でアップグレードします（データと設定はすべて保持されます）。</li>
-  <li><b>macOS</b>：「アップデートをインストール」をクリックするとダウンロード済みの DMG が開くので、FalconMM を「アプリケーション」へドラッグして入れ替えてください。ペアリングとデータは保持されます。</li>
-</ul>
-<h3>4. ブラウザー拡張機能</h3>
-<ol>
-  <li><code>FalconMM-Extension-0.4.0.zip</code> をダウンロードして<b>解凍</b>します。<code>chrome://extensions</code>（Edge は <code>edge://extensions</code>）を開き、「デベロッパー モード」を有効化 →「パッケージされていない拡張機能を読み込む」→ 解凍した <code>extension</code> フォルダーを選択します。</li>
-  <li>拡張機能のアイコンをクリックし、案内に従って FalconMM とペアリングします（設定 → ブラウザー拡張機能 → ペアリングコードを生成）。</li>
-  <li>Web ページでポップアップを開くと、画像 / 動画を受信トレイに取り込めます。対応サイトの動画は「現在の動画をダウンロード」で直接ダウンロードできます。</li>
-</ol>
-<p><b>対応サイト</b>：Bilibili、Douyin、Xiaohongshu（RedNote）、YouTube、TikTok、X (Twitter)、Instagram、Vimeo。国際サイトはネットワークからアクセスできる必要があります。YouTube / TikTok / X / Instagram / Vimeo には Tampermonkey のフォールバックがないため、解析に失敗した場合は具体的な理由が表示されます。IQiYi / Youku / Tencent Video / MangoTV は DRM で保護されており、ダウンロードには対応していません。</p>
-<h3>5. よく使う機能</h3>
-<ul>
-  <li><b>スクリーンショット / 録画</b>：<kbd>⌘/Ctrl+Shift+U</kbd> でスクリーンショット、<kbd>⌘/Ctrl+Shift+K</kbd> で画面録画（設定で変更可能）。結果はそのまま受信トレイに入ります。</li>
-  <li><b>受信トレイ</b>：項目を一件ずつまたはまとめて「タグを付け → アーカイブ」。アーカイブは状態を変えるだけで元ファイルは移動せず、取り消しもできます。</li>
-  <li><b>タグツリー</b>：左のツリーでタグをクリックすると素材を絞り込めます。「未分類」はシステムノードです。本格的な編集は「タグ管理」ページで行います。</li>
-  <li><b>AI タグ付け（任意）</b>：設定 → AI タグ付けで、OpenAI 互換エンドポイントやローカルの Ollama を追加できます。未設定でも他の機能には影響しません。認識結果はまず「提案状態」となり、確定してはじめて正式なタグとして書き込まれます。</li>
-  <li><b>外部ライブラリの取り込み</b>：設定 → データ保護 → 外部取り込み（Eagle / Billfish / digiKam）。元のライブラリは読み取り専用とし、コピーして取り込みます。</li>
-  <li><b>MCP</b>：設定 → MCP で、Claude などのデスクトップ AI が MCP 経由で素材を検索できます。</li>
-</ul>
-<h3>6. 拡張機能の開発</h3>
-<p>拡張機能のソースコードと開発者ガイドは同じリリースリポジトリで公開しています（<code>extension-source/</code> ディレクトリ、<code>DEVELOPER.md</code> 参照）。サイトの追加は拡張機能側の修正だけで完了します。サイト登録表 + 解析関数 + ページ resolver を追加すると、拡張機能がハンドシェイク時に新しいサイトをデスクトップ側へ自動報告してダウンロードを許可します。デスクトップ側の変更は不要です。詳細は <code>DEVELOPER.md</code> を参照してください。</p>
-<h3>7. よくある質問</h3>
-<ul>
-  <li><b>ダウンロード失敗 / 空ファイル</b>：サイトの URL は署名付きで有効期限が短いため、まずページを再読み込みしてからダウンロードしてください。それでも失敗する場合は、エラー表示の具体的な原因をご確認ください。</li>
-  <li><b>「アプリが壊れています」</b>（macOS）：公証されていないことが原因です。右クリック →「開く」を一度実行すればよく、その後アプリが自己検証を完了します。</li>
-  <li><b>アップデート確認に失敗する</b>：<code>api.github.com</code> へのアクセスが必要です。ネットワークが制限されている環境では後ほど再試行してください。</li>
-</ul>
-</section>
-
-<!-- ═══════════════ 한국어 ═══════════════ -->
-<section id="ko" lang="ko">
-<h2>한국어</h2>
-<h3>1. 설치</h3>
-<ul>
-  <li><b>macOS</b>: <code>FalconMM-0.4.0-arm64.dmg</code>(Apple 실리콘) 또는 <code>FalconMM-0.4.0-x64.dmg</code>(Intel)를 내려받아 열고 FalconMM을 '응용 프로그램'으로 드래그해요. 빌드가 공증되지 않았기 때문에 처음 열 때 macOS가 물으면 <b>오른쪽 클릭 → 열기</b>를 선택해요(또는 '시스템 설정 → 개인정보 보호 및 보안'에서 '확인 없이 열기'를 눌러요).</li>
-  <li><b>Windows</b>: <code>FalconMM-Setup-0.4.0.exe</code>를 내려받아 마법사에 따라 설치해요.</li>
-  <li>첫 실행 시 라이브러리 폴더(기본값 <code>~/Documents/FalconMM素材库</code>)가 만들어지고, 데이터베이스와 소재는 모두 이 컴퓨터에 저장돼요.</li>
-</ul>
-<h3>2. 인터페이스 언어</h3>
-<p>기본적으로 <b>시스템 언어</b>를 따라요(11개 언어 지원: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). '설정 → 일반 및 업데이트 → 언어'에서 언제든 바꿀 수 있고, 아랍어는 오른쪽에서 왼쪽(RTL) 레이아웃으로 표시돼요.</p>
-<h3>3. 소프트웨어 업데이트</h3>
-<ul>
-  <li>앱은 기본적으로 시작할 때 릴리스 저장소(github.com/darker2016/FalconMMRelease)의 최신 버전을 자동으로 확인해요. 설정에서 끌 수 있어요.</li>
-  <li><b>Windows</b>: 내려받기가 끝나면 '업데이트 설치'를 눌러요. 설치 프로그램이 앱을 닫고 그 자리에서 업그레이드하며, 데이터와 설정은 모두 유지돼요.</li>
-  <li><b>macOS</b>: '업데이트 설치'를 누르면 내려받은 DMG가 열려요. FalconMM을 '응용 프로그램'으로 드래그해 덮어쓰면 돼요. 페어링과 데이터는 그대로 유지돼요.</li>
-</ul>
-<h3>4. 브라우저 확장</h3>
-<ol>
-  <li><code>FalconMM-Extension-0.4.0.zip</code>을 내려받아 <b>압축을 풀어요</b>. <code>chrome://extensions</code>(Edge는 <code>edge://extensions</code>)를 연 뒤 '개발자 모드'를 켜고 → '압축해제된 확장 프로그램을 로드합니다' → 압축을 푼 <code>extension</code> 폴더를 선택해요.</li>
-  <li>확장 아이콘을 눌러 안내에 따라 FalconMM과 페어링해요(설정 → 브라우저 확장 → 페어링 코드 생성).</li>
-  <li>웹 페이지에서 팝업을 열면 이미지 / 동영상을 수신함으로 가져와요. 지원 사이트의 동영상은 '현재 동영상 다운로드'로 바로 내려받을 수 있어요.</li>
-</ol>
-<p><b>지원 사이트</b>: Bilibili, Douyin, Xiaohongshu(RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. 국제 사이트는 네트워크에서 해당 사이트에 접속할 수 있어야 해요. YouTube / TikTok / X / Instagram / Vimeo에는 Tampermonkey 대체 스크립트가 없어서 파싱이 실패하면 구체적인 이유를 알려줘요. IQiYi / Youku / Tencent Video / MangoTV는 DRM으로 보호되기 때문에 다운로드를 지원하지 않아요.</p>
-<h3>5. 자주 쓰는 기능</h3>
-<ul>
-  <li><b>스크린샷 / 녹화</b>: <kbd>⌘/Ctrl+Shift+U</kbd> 스크린샷, <kbd>⌘/Ctrl+Shift+K</kbd> 화면 녹화(설정에서 키 변경 가능). 결과는 바로 수신함으로 들어가요.</li>
-  <li><b>수신함</b>: 항목을 하나씩 또는 한꺼번에 '태그 달기 → 보관'으로 처리해요. 보관은 상태만 바꾸고 원본 파일을 옮기지 않으며 되돌릴 수 있어요.</li>
-  <li><b>태그 트리</b>: 왼쪽 트리에서 태그를 눌러 소재를 걸러 봐요. '미분류'는 시스템 노드예요. 세부 편집은 '태그 관리' 페이지에서 해요.</li>
-  <li><b>AI 태그(선택)</b>: '설정 → AI 태그'에서 OpenAI 호환 엔드포인트나 로컬 Ollama를 추가할 수 있어요. 설정하지 않아도 다른 기능에는 영향이 없어요. 인식 결과는 일단 '제안 상태'로 머물고, 확정해야 정식 태그로 기록돼요.</li>
-  <li><b>서드파티 라이브러리 가져오기</b>: '설정 → 데이터 보안 → 서드파티 가져오기'(Eagle / Billfish / digiKam). 원본 라이브러리는 읽기 전용으로 두고 복사해서 들여와요.</li>
-  <li><b>MCP</b>: 설정 → MCP에서 Claude 같은 데스크톱 AI가 MCP로 소재를 검색하게 할 수 있어요.</li>
-</ul>
-<h3>6. 확장 개발</h3>
-<p>확장 소스 코드와 개발자 가이드는 같은 릴리스 저장소에 공개돼요(<code>extension-source/</code> 디렉터리, <code>DEVELOPER.md</code> 참고). 사이트 추가는 확장 쪽만 고치면 돼요. 사이트 레지스트리 + 파서 + 페이지 resolver를 추가하면 확장이 핸드셰이크 때 새 사이트를 데스크톱 앱에 자동 보고해서 다운로드를 허용해요. 데스크톱 쪽 수정은 필요 없어요. 자세한 내용은 <code>DEVELOPER.md</code>를 참고해요.</p>
-<h3>7. 자주 묻는 질문</h3>
-<ul>
-  <li><b>다운로드 실패 / 빈 파일</b>: 사이트 주소에는 서명과 유효 기간이 있어서, 먼저 페이지를 새로 고친 뒤 다운로드를 눌러요. 그래도 실패하면 오류 메시지의 구체적인 원인을 확인해요.</li>
-  <li><b>'앱이 손상되었습니다'</b>(macOS): 공증이 없어서 생기는 현상이에요. 오른쪽 클릭으로 한 번만 열어 주면 이후 앱이 자체 검증을 마쳐요.</li>
-  <li><b>업데이트 확인 실패</b>: <code>api.github.com</code>에 접속할 수 있어야 해요. 네트워크가 제한되면 나중에 다시 시도해요.</li>
-</ul>
-</section>
-
-<!-- ═══════════════ Français ═══════════════ -->
-<section id="fr" lang="fr">
-<h2>Français</h2>
-<h3>1. Installation</h3>
-<ul>
-  <li><b>macOS</b> : téléchargez <code>FalconMM-0.4.0-arm64.dmg</code> (Apple silicon) ou <code>FalconMM-0.4.0-x64.dmg</code> (Intel), ouvrez-le puis faites glisser FalconMM dans <i>Applications</i>. Le build n’est pas notarié : au premier lancement, faites un clic droit → <i>Ouvrir</i> quand macOS le demande (ou passez par Réglages Système → Confidentialité et sécurité → Ouvrir quand même).</li>
-  <li><b>Windows</b> : téléchargez <code>FalconMM-Setup-0.4.0.exe</code> et suivez l’assistant.</li>
-  <li>Au premier lancement, un dossier de bibliothèque est créé (par défaut <code>~/Documents/FalconMM素材库</code>) ; la base de données et les médias restent sur votre machine.</li>
-</ul>
-<h3>2. Langue de l’interface</h3>
-<p>L’application suit par défaut la <b>langue du système</b> (11 langues : 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). Vous pouvez changer de langue à tout moment dans <b>Réglages → Général et mises à jour → Langue</b> ; l’arabe utilise une mise en page de droite à gauche.</p>
-<h3>3. Mises à jour du logiciel</h3>
-<ul>
-  <li>Par défaut, l’application vérifie au démarrage les dernières versions du dépôt de publication (github.com/darker2016/FalconMMRelease) ; ce comportement se désactive dans les réglages.</li>
-  <li><b>Windows</b> : après le téléchargement, cliquez sur <i>Installer la mise à jour</i> — l’installateur ferme l’application et met à jour sur place, en conservant toutes les données et tous les réglages.</li>
-  <li><b>macOS</b> : cliquez sur <i>Installer la mise à jour</i> pour ouvrir le DMG téléchargé, puis faites glisser FalconMM dans <i>Applications</i> pour le remplacer. L’appariement et les données sont conservés.</li>
-</ul>
-<h3>4. Extension navigateur</h3>
-<ol>
-  <li>Téléchargez <code>FalconMM-Extension-0.4.0.zip</code> et <b>décompressez</b>-le. Ouvrez <code>chrome://extensions</code> (Edge : <code>edge://extensions</code>), activez le <i>Mode développeur</i> → <i>Charger l’extension non empaquetée</i> → choisissez le dossier <code>extension</code> décompressé.</li>
-  <li>Cliquez sur l’icône de l’extension et appariez-la avec FalconMM (Réglages → Extension navigateur → Générer un code d’appariement).</li>
-  <li>Ouvrez la fenêtre contextuelle sur n’importe quelle page pour capturer des images / vidéos vers la boîte de réception ; sur les sites pris en charge, utilisez <i>Télécharger la vidéo courante</i>.</li>
-</ol>
-<p><b>Sites pris en charge</b> : Bilibili, Douyin, Xiaohongshu (RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. Les sites internationaux exigent que votre réseau puisse y accéder ; YouTube / TikTok / X / Instagram / Vimeo n’ont pas de solution de secours Tampermonkey — les échecs s’accompagnent toujours d’une raison précise. IQiYi / Youku / Tencent Video / MangoTV sont protégés par DRM et ne sont pas pris en charge pour le téléchargement.</p>
-<h3>5. Fonctions courantes</h3>
-<ul>
-  <li><b>Capture d’écran / enregistrement</b> : <kbd>⌘/Ctrl+Shift+U</kbd> pour la capture d’écran, <kbd>⌘/Ctrl+Shift+K</kbd> pour l’enregistrement de l’écran (raccourcis modifiables dans les réglages) ; les résultats arrivent directement dans la boîte de réception.</li>
-  <li><b>Boîte de réception</b> : examinez les éléments un par un ou en lot, « étiqueter → archiver » ; l’archivage ne change que le statut sans déplacer les fichiers originaux, et il est réversible.</li>
-  <li><b>Arborescence d’étiquettes</b> : cliquez sur les étiquettes de l’arborescence à gauche pour filtrer les médias ; « Non classé » est un nœud système ; les opérations avancées se font dans la page Gestion des étiquettes.</li>
-  <li><b>Étiquetage par IA (facultatif)</b> : Réglages → Étiquetage IA accepte tout point de terminaison compatible OpenAI ou un Ollama local ; sans configuration, rien d’autre n’est affecté. Les résultats restent d’abord à l’état de « suggestion » et ne deviennent des étiquettes définitives qu’après confirmation.</li>
-  <li><b>Import de bibliothèques tierces</b> : Réglages → Sécurité des données → import tiers (Eagle / Billfish / digiKam) ; la bibliothèque d’origine est lue sans modification et les médias sont copiés dans la bibliothèque.</li>
-  <li><b>MCP</b> : Réglages → MCP permet aux assistants IA de bureau tels que Claude de retrouver vos médias via MCP.</li>
-</ul>
-<h3>6. Développement de l’extension</h3>
-<p>Le code source de l’extension et le guide du développeur sont publiés dans le même dépôt de publication (répertoire <code>extension-source/</code>, avec <code>DEVELOPER.md</code>). Ajouter un site ne touche que l’extension : registre des sites + fonction d’analyse + resolver de page ; lors du handshake, l’extension signale automatiquement les nouveaux sites à l’application de bureau pour autoriser leur téléchargement, sans modification du bureau. Voir <code>DEVELOPER.md</code> pour les détails.</p>
-<h3>7. FAQ</h3>
-<ul>
-  <li><b>Échec du téléchargement / fichier vide</b> : les URL des sites sont signées et expirent vite — rafraîchissez d’abord la page, puis réessayez ; en cas d’échec, consultez la raison précise indiquée par le message d’erreur.</li>
-  <li><b>« L’application est endommagée »</b> (macOS) : cela vient de l’absence de notarisation ; un clic droit → Ouvrir suffit, et l’application termine ensuite automatiquement sa propre vérification.</li>
-  <li><b>Échec de la vérification des mises à jour</b> : l’accès à <code>api.github.com</code> est nécessaire ; si le réseau est restreint, réessayez plus tard.</li>
-</ul>
-</section>
-
-<!-- ═══════════════ Deutsch ═══════════════ -->
-<section id="de" lang="de">
-<h2>Deutsch</h2>
-<h3>1. Installation</h3>
-<ul>
-  <li><b>macOS</b>: Laden Sie <code>FalconMM-0.4.0-arm64.dmg</code> (Apple Silicon) oder <code>FalconMM-0.4.0-x64.dmg</code> (Intel) herunter, öffnen Sie das Image und ziehen Sie FalconMM in <i>Programme</i>. Das Build ist nicht notarisiert; klicken Sie beim ersten Start bei der macOS-Meldung mit der rechten Maustaste → <i>Öffnen</i> (oder unter Systemeinstellungen → Datenschutz &amp; Sicherheit → Trotzdem öffnen).</li>
-  <li><b>Windows</b>: Laden Sie <code>FalconMM-Setup-0.4.0.exe</code> herunter und folgen Sie dem Assistenten.</li>
-  <li>Beim ersten Start wird ein Bibliotheksordner angelegt (Standard: <code>~/Documents/FalconMM素材库</code>); Datenbank und Medien bleiben lokal auf Ihrem Rechner.</li>
-</ul>
-<h3>2. Sprache der Oberfläche</h3>
-<p>Die App folgt standardmäßig Ihrer <b>Systemsprache</b> (11 Sprachen: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). Der Wechsel ist jederzeit möglich unter <b>Einstellungen → Allgemein &amp; Updates → Sprache</b>; Arabisch verwendet ein Layout von rechts nach links.</p>
-<h3>3. Software-Updates</h3>
-<ul>
-  <li>Standardmäßig prüft die App beim Start die neueste Version im Release-Repository (github.com/darker2016/FalconMMRelease); das lässt sich in den Einstellungen deaktivieren.</li>
-  <li><b>Windows</b>: Nach dem Download auf <i>Update installieren</i> klicken — das Installationsprogramm schließt die App und aktualisiert sie direkt; alle Daten und Einstellungen bleiben erhalten.</li>
-  <li><b>macOS</b>: Nach dem Download öffnet <i>Update installieren</i> die heruntergeladene DMG; ziehen Sie FalconMM in <i>Programme</i>, um es zu ersetzen. Kopplung und Daten bleiben erhalten.</li>
-</ul>
-<h3>4. Browser-Erweiterung</h3>
-<ol>
-  <li>Laden Sie <code>FalconMM-Extension-0.4.0.zip</code> herunter und <b>entpacken</b> Sie das Archiv. Öffnen Sie <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>), aktivieren Sie den <i>Entwicklermodus</i> → <i>Entpackte Erweiterung laden</i> → wählen Sie den entpackten Ordner <code>extension</code>.</li>
-  <li>Klicken Sie auf das Symbol der Erweiterung und koppeln Sie sie nach den Hinweisen mit FalconMM (Einstellungen → Browser-Erweiterung → Kopplungscode erzeugen).</li>
-  <li>Öffnen Sie das Popup auf einer beliebigen Seite, um Bilder / Videos in den Posteingang zu erfassen; auf unterstützten Websites können Sie <i>Aktuelles Video herunterladen</i> verwenden.</li>
-</ol>
-<p><b>Unterstützte Websites</b>: Bilibili, Douyin, Xiaohongshu (RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. Für internationale Websites muss Ihr Netzwerk darauf zugreifen können; YouTube / TikTok / X / Instagram / Vimeo haben keinen Tampermonkey-Fallback — Fehlschläge kommen immer mit einem konkreten Grund zurück. IQiYi / Youku / Tencent Video / MangoTV sind durch DRM geschützt und werden nicht zum Herunterladen angeboten.</p>
-<h3>5. Häufig genutzte Funktionen</h3>
-<ul>
-  <li><b>Screenshot / Bildschirmaufnahme</b>: <kbd>⌘/Ctrl+Shift+U</kbd> für Screenshots, <kbd>⌘/Ctrl+Shift+K</kbd> für Bildschirmaufnahmen (Tasten in den Einstellungen umbelegbar); die Ergebnisse landen direkt im Posteingang.</li>
-  <li><b>Posteingang</b>: Einträge einzeln oder gesammelt „mit Tags versehen → archivieren“; die Archivierung ändert nur den Status, verschiebt die Originaldateien nicht und ist umkehrbar.</li>
-  <li><b>Tag-Baum</b>: Klicken Sie in der Baumstruktur links auf Tags, um Medien zu filtern; „Nicht kategorisiert“ ist ein Systemknoten; aufwändige Bearbeitung erfolgt auf der Seite Tag-Verwaltung.</li>
-  <li><b>KI-Tags (optional)</b>: Einstellungen → KI-Tags akzeptiert jeden OpenAI-kompatiblen Endpunkt oder ein lokales Ollama; ohne Einrichtung bleiben andere Funktionen unberührt. Erkennungsergebnisse sind zunächst nur „Vorschläge“ und werden erst nach Bestätigung als feste Tags übernommen.</li>
-  <li><b>Import aus Drittanbieter-Bibliotheken</b>: Einstellungen → Datensicherheit → Drittanbieter-Import (Eagle / Billfish / digiKam); die Quellbibliothek wird nur gelesen und die Medien in die Bibliothek kopiert.</li>
-  <li><b>MCP</b>: Einstellungen → MCP ermöglicht Desktop-KI-Assistenten wie Claude, Medien über MCP zu finden.</li>
-</ul>
-<h3>6. Erweiterungsentwicklung</h3>
-<p>Quellcode der Erweiterung und das Entwicklerhandbuch werden im selben Release-Repository veröffentlicht (Ordner <code>extension-source/</code>, darin <code>DEVELOPER.md</code>). Für eine neue Website reicht es, nur die Erweiterung anzupassen: Websiteregister + Parser-Funktion + Seiten-Resolver; beim Handshake meldet die Erweiterung die neue Website automatisch an die Desktop-App, die den Download freigibt — Änderungen an der Desktop-App sind nicht nötig. Details siehe <code>DEVELOPER.md</code>.</p>
-<h3>7. Häufige Fragen</h3>
-<ul>
-  <li><b>Download fehlgeschlagen / leere Datei</b>: Website-URLs sind signiert und laufen schnell ab — laden Sie zuerst die Seite neu und klicken Sie dann auf Download; wenn es weiterhin scheitert, nennt die Fehlermeldung den konkreten Grund.</li>
-  <li><b>„App ist beschädigt“</b> (macOS): Folge der fehlenden Notarisierung — einmal per Rechtsklick → Öffnen starten; die App schließt danach ihre Eigenprüfung automatisch ab.</li>
-  <li><b>Update-Prüfung fehlgeschlagen</b>: Zugriff auf <code>api.github.com</code> ist erforderlich; bei eingeschränktem Netzwerk später erneut versuchen.</li>
-</ul>
-</section>
-
-<!-- ═══════════════ Español ═══════════════ -->
-<section id="es" lang="es">
-<h2>Español</h2>
-<h3>1. Instalación</h3>
-<ul>
-  <li><b>macOS</b>: descargue <code>FalconMM-0.4.0-arm64.dmg</code> (Apple silicon) o <code>FalconMM-0.4.0-x64.dmg</code> (Intel), ábralo y arrastre FalconMM a <i>Aplicaciones</i>. La compilación no está notarizada; en el primer inicio, haga clic derecho → <i>Abrir</i> cuando macOS lo pida (o vaya a Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente).</li>
-  <li><b>Windows</b>: descargue <code>FalconMM-Setup-0.4.0.exe</code> y siga el asistente.</li>
-  <li>En el primer inicio se crea la carpeta de la biblioteca (por defecto <code>~/Documents/FalconMM素材库</code>); la base de datos y los archivos se quedan en su equipo.</li>
-</ul>
-<h3>2. Idioma de la interfaz</h3>
-<p>La aplicación sigue por defecto <b>el idioma del sistema</b> (11 idiomas: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). Puede cambiarlo en cualquier momento en <b>Ajustes → General y actualizaciones → Idioma</b>; el árabe usa una disposición de derecha a izquierda.</p>
-<h3>3. Actualizaciones de software</h3>
-<ul>
-  <li>Por defecto, la aplicación comprueba al iniciarse la última versión del repositorio de versiones (github.com/darker2016/FalconMMRelease); se puede desactivar en Ajustes.</li>
-  <li><b>Windows</b>: tras la descarga, pulse <i>Instalar actualización</i>; el instalador cierra la aplicación y actualiza en el sitio, conservando todos los datos y ajustes.</li>
-  <li><b>macOS</b>: al pulsar <i>Instalar actualización</i> se abre el DMG descargado; arrastre FalconMM a <i>Aplicaciones</i> para reemplazarlo. El emparejamiento y los datos se conservan.</li>
-</ul>
-<h3>4. Extensión de navegador</h3>
-<ol>
-  <li>Descargue <code>FalconMM-Extension-0.4.0.zip</code> y <b>descomprímalo</b>. Abra <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>), active el <i>Modo de desarrollador</i> → <i>Cargar extensión sin empaquetar</i> → elija la carpeta <code>extension</code> descomprimida.</li>
-  <li>Haga clic en el icono de la extensión y emparéjela con FalconMM siguiendo las indicaciones (Ajustes → Extensión de navegador → Generar código de emparejamiento).</li>
-  <li>Abra la ventana emergente en cualquier página para capturar imágenes / vídeos en la bandeja de entrada; en los sitios compatibles puede pulsar <i>Descargar vídeo actual</i>.</li>
-</ol>
-<p><b>Sitios compatibles</b>: Bilibili, Douyin, Xiaohongshu (RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. Los sitios internacionales requieren que su red pueda acceder a ellos; YouTube / TikTok / X / Instagram / Vimeo no tienen respaldo en Tampermonkey — los fallos se comunican siempre con un motivo concreto. IQiYi / Youku / Tencent Video / MangoTV están protegidos por DRM y no se ofrece su descarga.</p>
-<h3>5. Funciones habituales</h3>
-<ul>
-  <li><b>Captura / grabación</b>: <kbd>⌘/Ctrl+Shift+U</kbd> captura de pantalla, <kbd>⌘/Ctrl+Shift+K</kbd> grabación de pantalla (teclas reasignables en Ajustes); los resultados entran directamente en la bandeja de entrada.</li>
-  <li><b>Bandeja de entrada</b>: revise los elementos uno a uno o por lotes, «etiquetar → archivar»; archivar solo cambia el estado, no mueve los archivos originales y se puede deshacer.</li>
-  <li><b>Árbol de etiquetas</b>: haga clic en las etiquetas del árbol de la izquierda para filtrar; «Sin clasificar» es un nodo del sistema; las operaciones avanzadas están en la página Gestión de etiquetas.</li>
-  <li><b>Etiquetado con IA (opcional)</b>: Ajustes → Etiquetado con IA acepta cualquier punto de conexión compatible con OpenAI o un Ollama local; sin configurarlo, el resto de funciones no se ve afectado. Los resultados del reconocimiento quedan primero como «sugerencias» y solo se escriben como etiquetas definitivas tras confirmarlos.</li>
-  <li><b>Importación de bibliotecas de terceros</b>: Ajustes → Seguridad de datos → importación de terceros (Eagle / Billfish / digiKam); la biblioteca de origen se lee sin modificar y los archivos se copian a la biblioteca.</li>
-  <li><b>MCP</b>: Ajustes → MCP permite que asistentes de IA de escritorio como Claude busquen sus archivos mediante MCP.</li>
-</ul>
-<h3>6. Desarrollo de la extensión</h3>
-<p>El código fuente de la extensión y la guía para desarrolladores se publican en el mismo repositorio de versiones (directorio <code>extension-source/</code>, con <code>DEVELOPER.md</code>). Añadir un sitio solo requiere tocar la extensión: registro de sitios + función de análisis + resolvedor de página; durante el handshake la extensión informa automáticamente de los sitios nuevos a la aplicación de escritorio para autorizar su descarga, sin modificar el escritorio. Vea <code>DEVELOPER.md</code> para más detalles.</p>
-<h3>7. Preguntas frecuentes</h3>
-<ul>
-  <li><b>¿Por qué falla la descarga o el archivo sale vacío?</b> Las URL de los sitios llevan firma y caducan rápido: primero actualice la página y vuelva a pulsar descargar; si sigue fallando, consulte el motivo concreto que indica el error.</li>
-  <li><b>¿Por qué macOS dice «La aplicación está dañada»?</b> Se debe a la falta de notarización: basta abrirla una vez con clic derecho → Abrir; después la aplicación completa automáticamente su propia verificación.</li>
-  <li><b>¿Por qué falla la comprobación de actualizaciones?</b> Requiere acceso a <code>api.github.com</code>; si la red está restringida, reintente más tarde.</li>
-</ul>
-</section>
-
-<!-- ═══════════════ Português ═══════════════ -->
-<section id="pt" lang="pt">
-<h2>Português</h2>
-<h3>1. Instalação</h3>
-<ul>
-  <li><b>macOS</b>: baixe o <code>FalconMM-0.4.0-arm64.dmg</code> (Apple silicon) ou o <code>FalconMM-0.4.0-x64.dmg</code> (Intel), abra e arraste o FalconMM para <i>Aplicativos</i>. O build não é notarizado; na primeira abertura, clique com o botão direito → <i>Abrir</i> quando o macOS pedir (ou use Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim).</li>
-  <li><b>Windows</b>: baixe o <code>FalconMM-Setup-0.4.0.exe</code> e siga o assistente.</li>
-  <li>Na primeira execução é criada a pasta da biblioteca (padrão <code>~/Documents/FalconMM素材库</code>); o banco de dados e os arquivos ficam no seu computador.</li>
-</ul>
-<h3>2. Idioma da interface</h3>
-<p>O aplicativo segue por padrão o <b>idioma do sistema</b> (11 idiomas: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). Dá para trocar a qualquer momento em <b>Configurações → Geral e atualizações → Idioma</b>; o árabe usa layout da direita para a esquerda.</p>
-<h3>3. Atualizações do software</h3>
-<ul>
-  <li>Por padrão, o aplicativo verifica na inicialização a versão mais recente do repositório de versões (github.com/darker2016/FalconMMRelease); dá para desativar nas Configurações.</li>
-  <li><b>Windows</b>: depois do download, clique em <i>Instalar atualização</i> — o instalador fecha o aplicativo e atualiza no lugar, mantendo todos os dados e configurações.</li>
-  <li><b>macOS</b>: clicar em <i>Instalar atualização</i> abre o DMG baixado; arraste o FalconMM para <i>Aplicativos</i> para substituí-lo. O pareamento e os dados são mantidos.</li>
-</ul>
-<h3>4. Extensão de navegador</h3>
-<ol>
-  <li>Baixe o <code>FalconMM-Extension-0.4.0.zip</code> e <b>descompacte</b>. Abra <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>), ative o <i>Modo do desenvolvedor</i> → <i>Carregar sem compactação</i> → escolha a pasta <code>extension</code> descompactada.</li>
-  <li>Clique no ícone da extensão e faça o pareamento com o FalconMM seguindo as instruções (Configurações → Extensão de navegador → Gerar código de pareamento).</li>
-  <li>Abra o popup em qualquer página para capturar imagens / vídeos na caixa de entrada; nos sites compatíveis dá para clicar em <i>Baixar vídeo atual</i>.</li>
-</ol>
-<p><b>Sites compatíveis</b>: Bilibili, Douyin, Xiaohongshu (RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. Os sites internacionais exigem que sua rede consiga acessá-los; YouTube / TikTok / X / Instagram / Vimeo não têm script de reserva no Tampermonkey — as falhas voltam sempre com um motivo específico. IQiYi / Youku / Tencent Video / MangoTV são protegidos por DRM e não têm download.</p>
-<h3>5. Funções do dia a dia</h3>
-<ul>
-  <li><b>Captura de tela / gravação</b>: <kbd>⌘/Ctrl+Shift+U</kbd> captura de tela, <kbd>⌘/Ctrl+Shift+K</kbd> gravação de tela (teclas remapeáveis nas Configurações); os resultados vão direto para a caixa de entrada.</li>
-  <li><b>Caixa de entrada</b>: revise os itens um a um ou em lote, “etiquetar → arquivar”; arquivar só muda o status, não move os arquivos originais e pode ser desfeito.</li>
-  <li><b>Árvore de etiquetas</b>: clique nas etiquetas da árvore à esquerda para filtrar; “Sem categoria” é um nó do sistema; as operações avançadas ficam na página Gerenciar etiquetas.</li>
-  <li><b>Etiquetagem por IA (opcional)</b>: Configurações → Etiquetagem por IA aceita qualquer endpoint compatível com OpenAI ou um Ollama local; sem configurar, nada mais é afetado. Os resultados do reconhecimento ficam primeiro como “sugestões” e só viram etiquetas oficiais depois da confirmação.</li>
-  <li><b>Importação de bibliotecas de terceiros</b>: Configurações → Segurança dos dados → importação de terceiros (Eagle / Billfish / digiKam); a biblioteca de origem é lida sem alterações e os arquivos são copiados para a biblioteca.</li>
-  <li><b>MCP</b>: Configurações → MCP permite que assistentes de IA de desktop, como o Claude, encontrem seus arquivos via MCP.</li>
-</ul>
-<h3>6. Desenvolvimento da extensão</h3>
-<p>O código-fonte da extensão e o guia do desenvolvedor são publicados no mesmo repositório de versões (pasta <code>extension-source/</code>, com <code>DEVELOPER.md</code>). Adicionar um site mexe só na extensão: registro de sites + função de análise + resolver de página; no handshake, a extensão informa automaticamente os sites novos ao aplicativo de desktop para liberar o download, sem precisar mudar o desktop. Veja o <code>DEVELOPER.md</code> para detalhes.</p>
-<h3>7. Perguntas frequentes</h3>
-<ul>
-  <li><b>Falha no download / arquivo vazio</b>: as URLs dos sites são assinadas e expiram rápido — atualize a página primeiro e clique de novo no download; se continuar falhando, veja o motivo específico indicado no erro.</li>
-  <li><b>“O aplicativo está danificado”</b> (macOS): é por falta de notarização — basta abrir uma vez com o botão direito → Abrir; depois o aplicativo conclui a própria verificação automaticamente.</li>
-  <li><b>Falha ao verificar atualizações</b>: é preciso acesso a <code>api.github.com</code>; com a rede restrita, tente mais tarde.</li>
-</ul>
-</section>
-
-<!-- ═══════════════ Русский ═══════════════ -->
-<section id="ru" lang="ru">
-<h2>Русский</h2>
-<h3>1. Установка</h3>
-<ul>
-  <li><b>macOS</b>: скачайте <code>FalconMM-0.4.0-arm64.dmg</code> (Apple silicon) или <code>FalconMM-0.4.0-x64.dmg</code> (Intel), откройте образ и перетащите FalconMM в папку «Программы». Сборка не нотаризована: при первом запуске, когда macOS покажет запрос, нажмите правой кнопкой мыши → «Открыть» (или в «Системных настройках → Конфиденциальность и безопасность» нажмите «Все равно открыть»).</li>
-  <li><b>Windows</b>: скачайте <code>FalconMM-Setup-0.4.0.exe</code> и следуйте шагам мастера установки.</li>
-  <li>При первом запуске создаётся папка библиотеки (по умолчанию <code>~/Documents/FalconMM素材库</code>); база данных и материалы хранятся локально на вашем компьютере.</li>
-</ul>
-<h3>2. Язык интерфейса</h3>
-<p>По умолчанию приложение следует <b>языку системы</b> (11 языков: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). Сменить язык можно в любой момент: <b>Настройки → Общие и обновления → Язык</b>; арабский использует интерфейс справа налево.</p>
-<h3>3. Обновления приложения</h3>
-<ul>
-  <li>По умолчанию при запуске приложение проверяет последнюю версию в репозитории релизов (github.com/darker2016/FalconMMRelease); проверку можно отключить в настройках.</li>
-  <li><b>Windows</b>: после загрузки нажмите «Установить обновление» — установщик закроет приложение и обновит его на месте, сохранив все данные и настройки.</li>
-  <li><b>macOS</b>: нажмите «Установить обновление», откроется загруженный образ DMG — перетащите FalconMM в «Программы», чтобы заменить его. Сопряжение и данные сохраняются.</li>
-</ul>
-<h3>4. Браузерное расширение</h3>
-<ol>
-  <li>Скачайте <code>FalconMM-Extension-0.4.0.zip</code> и <b>распакуйте</b> архив. Откройте <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>), включите «Режим разработчика» → «Загрузить распакованное расширение» → выберите распакованную папку <code>extension</code>.</li>
-  <li>Нажмите значок расширения и выполните сопряжение с FalconMM по подсказкам (Настройки → Браузерное расширение → Создать код сопряжения).</li>
-  <li>Открывайте всплывающее окно на любой странице, чтобы отправлять изображения / видео во входящие; на поддерживаемых сайтах доступна кнопка «Скачать текущее видео».</li>
-</ol>
-<p><b>Поддерживаемые сайты</b>: Bilibili, Douyin, Xiaohongshu (RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. Для международных сайтов нужно, чтобы ваша сеть имела к ним доступ; у YouTube / TikTok / X / Instagram / Vimeo нет резервного сценария Tampermonkey — при сбое всегда сообщается конкретная причина. IQiYi / Youku / Tencent Video / MangoTV защищены DRM, их загрузка не поддерживается.</p>
-<h3>5. Основные функции</h3>
-<ul>
-  <li><b>Снимок экрана / запись</b>: <kbd>⌘/Ctrl+Shift+U</kbd> — снимок экрана, <kbd>⌘/Ctrl+Shift+K</kbd> — запись экрана (клавиши переназначаются в настройках); результаты сразу попадают во входящие.</li>
-  <li><b>Входящие</b>: разбирайте элементы по одному или пакетно — «поставить теги → в архив»; архивация меняет только статус, не перемещает исходные файлы и отменяется.</li>
-  <li><b>Дерево тегов</b>: нажимайте теги в дереве слева, чтобы фильтровать материалы; «Без категории» — системный узел; расширенные операции — на странице управления тегами.</li>
-  <li><b>Теги ИИ (необязательно)</b>: Настройки → ИИ-теги принимают любой совместимый с OpenAI эндпоинт или локальный Ollama; без настройки остальные функции не затрагиваются. Результаты распознавания сначала хранятся как «предложения» и записываются как постоянные теги только после подтверждения.</li>
-  <li><b>Импорт из сторонних библиотек</b>: Настройки → Безопасность данных → импорт из сторонних библиотек (Eagle / Billfish / digiKam); исходная библиотека открывается только для чтения, материалы копируются в библиотеку.</li>
-  <li><b>MCP</b>: Настройки → MCP позволяет настольным ИИ-ассистентам вроде Claude искать материалы через MCP.</li>
-</ul>
-<h3>6. Разработка расширения</h3>
-<p>Исходный код расширения и руководство для разработчиков публикуются в том же репозитории релизов (каталог <code>extension-source/</code>, в нём <code>DEVELOPER.md</code>). Чтобы добавить сайт, достаточно изменить только расширение: реестр сайтов + функция разбора + резолвер страницы; при хендшейке расширение автоматически сообщает новые сайты настольному приложению, чтобы разрешить их загрузку, — менять настольное приложение не нужно. Подробности в <code>DEVELOPER.md</code>.</p>
-<h3>7. Часто задаваемые вопросы</h3>
-<ul>
-  <li><b>Ошибка загрузки / пустой файл</b>: ссылки сайтов подписаны и быстро устаревают — сначала обновите страницу и снова нажмите загрузку; если не помогло, смотрите конкретную причину в сообщении об ошибке.</li>
-  <li><b>«Приложение повреждено»</b> (macOS): следствие отсутствия нотаризации — достаточно один раз открыть приложение правой кнопкой → «Открыть»; после этого приложение само завершит проверку подписи.</li>
-  <li><b>Не удаётся проверить обновления</b>: требуется доступ к <code>api.github.com</code>; при ограниченной сети повторите попытку позже.</li>
-</ul>
-</section>
-
-<!-- ═══════════════ العربية ═══════════════ -->
-<section id="ar" lang="ar" dir="rtl">
-<h2>العربية</h2>
-<h3>1. التثبيت</h3>
-<ul>
-  <li><b>macOS</b>: نزّل <code>FalconMM-0.4.0-arm64.dmg</code> (معالجات Apple) أو <code>FalconMM-0.4.0-x64.dmg</code> (Intel)، ثم افتح الملف واسحب FalconMM إلى مجلد «التطبيقات». النسخة غير موثّقة، فعند أول تشغيل انقر بزر الفأرة الأيمن ← <b>فتح</b> عندما يطلب macOS ذلك (أو من «إعدادات النظام ← الخصوصية والأمان» انقر «فتح على أي حال»).</li>
-  <li><b>Windows</b>: نزّل <code>FalconMM-Setup-0.4.0.exe</code> واتبع خطوات معالج الإعداد.</li>
-  <li>عند أول تشغيل يُنشأ مجلد المكتبة (افتراضيًا <code>~/Documents/FalconMM素材库</code>)، وتبقى قاعدة البيانات والملفات على جهازك محليًا.</li>
-</ul>
-<h3>2. لغة الواجهة</h3>
-<p>يتبع التطبيق افتراضيًا <b>لغة النظام</b> (11 لغة: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). يمكنك التبديل في أي وقت من <b>الإعدادات ← عام وتحديثات ← اللغة</b>؛ وتُعرض العربية باتجاه من اليمين إلى اليسار.</p>
-<h3>3. تحديثات البرنامج</h3>
-<ul>
-  <li>يتحقق التطبيق افتراضيًا عند بدء التشغيل من أحدث إصدار في مستودع الإصدارات (github.com/darker2016/FalconMMRelease)، ويمكن تعطيل ذلك من الإعدادات.</li>
-  <li><b>Windows</b>: بعد اكتمال التنزيل انقر «تثبيت التحديث»، فيغلق المُثبِّت التطبيق ويحدّثه في مكانه مع الاحتفاظ بجميع البيانات والإعدادات.</li>
-  <li><b>macOS</b>: انقر «تثبيت التحديث» ليُفتح ملف DMG الذي نُزِّل، ثم اسحب FalconMM إلى «التطبيقات» ليحل محله؛ يُحتفظ بالاقتران والبيانات.</li>
-</ul>
-<h3>4. إضافة المتصفح</h3>
-<ol>
-  <li>نزّل <code>FalconMM-Extension-0.4.0.zip</code> و<b>فكّ ضغطه</b>. افتح <code>chrome://extensions</code> (وفي Edge: <code>edge://extensions</code>)، وفعّل «وضع المطوّر» ← «تحميل إضافة غير مضغوطة» ← اختر مجلد <code>extension</code> بعد فك الضغط.</li>
-  <li>انقر أيقونة الإضافة واقترنها مع FalconMM وفق التعليمات (الإعدادات ← إضافة المتصفح ← إنشاء رمز الاقتران).</li>
-  <li>افتح النافذة المنبثقة على أي صفحة لالتقاط الصور / الفيديوهات إلى صندوق الوارد؛ وفي المواقع المدعومة يمكنك النقر على «تنزيل الفيديو الحالي».</li>
-</ol>
-<p><b>المواقع المدعومة</b>: Bilibili وDouyin وXiaohongshu (RedNote) وYouTube وTikTok وX (Twitter) وInstagram وVimeo. تتطلب المواقع الدولية أن تتمكن شبكتك من الوصول إليها؛ ولا يتوفر لـ YouTube / TikTok / X / Instagram / Vimeo بديل عبر Tampermonkey، ويظهر عند التعذر سبب واضح ومحدد. أما IQiYi / Youku / Tencent Video / MangoTV فهي محمية بحقوق النشر (DRM) ولا يُتاح تنزيلها.</p>
-<h3>5. الوظائف اليومية</h3>
-<ul>
-  <li><b>لقطة الشاشة / التسجيل</b>: <kbd>⌘/Ctrl+Shift+U</kbd> لقطة شاشة، و<kbd>⌘/Ctrl+Shift+K</kbd> تسجيل الشاشة (يمكن تغيير الاختصارات من الإعدادات)، وتذهب النتائج مباشرة إلى صندوق الوارد.</li>
-  <li><b>صندوق الوارد</b>: راجع العناصر واحدة تلو الأخرى أو دفعة واحدة «وسمها ← أرشفتها»؛ الأرشفة تغيّر الحالة فقط دون نقل الملفات الأصلية ويمكن التراجع عنها.</li>
-  <li><b>شجرة الوسوم</b>: انقر الوسوم في الشجرة الجانبية لتصفية المواد؛ «غير المصنّف» عقدة نظامية؛ والعمليات المتقدمة تجري في صفحة «إدارة الوسوم».</li>
-  <li><b>الوسم بالذكاء الاصطناعي (اختياري)</b>: الإعدادات ← الوسم بالذكاء الاصطناعي، ويمكن إضافة أي نقطة نهاية متوافقة مع OpenAI أو Ollama محلي؛ وعدم الإعداد لا يؤثر على بقية الوظائف. تظهر نتائج التعرف أولًا كـ«اقتراحات» ولا تُكتب وسومًا رسمية إلا بعد تأكيدها.</li>
-  <li><b>استيراد مكتبات الأطراف الأخرى</b>: الإعدادات ← أمان البيانات ← استيراد من الأطراف الأخرى (Eagle / Billfish / digiKam)؛ تُقرأ المكتبة الأصلية دون تعديل وتُنسخ المواد إلى المكتبة.</li>
-  <li><b>MCP</b>: الإعدادات ← MCP، ويتيح ذلك لمساعدي الذكاء الاصطناعي على سطح المكتب مثل Claude البحث عن موادك عبر MCP.</li>
-</ul>
-<h3>6. تطوير الإضافات</h3>
-<p>يُنشر الكود المصدري للإضافة ودليل المطوّر في مستودع الإصدارات نفسه (مجلد <code>extension-source/</code>، وبه <code>DEVELOPER.md</code>). لإضافة موقع جديد يكفي تعديل الإضافة فقط: سجل المواقع + دالة التحليل + محلّل الصفحة (resolver)؛ فعند المصافحة (handshake) تُبلّغ الإضافة الموقعَ الجديد تلقائيًا إلى تطبيق سطح المكتب للسماح بتنزيله، دون أي تعديل على تطبيق سطح المكتب. راجع <code>DEVELOPER.md</code> لمزيد من التفاصيل.</p>
-<h3>7. الأسئلة الشائعة</h3>
-<ul>
-  <li><b>فشل التنزيل / ملف فارغ</b>: روابط المواقع عادة موقّعة وقصيرة الأجل، فحدّث الصفحة أولًا ثم انقر التنزيل؛ وإذا استمر الفشل فاطلع من رسالة الخطأ على السبب المحدد.</li>
-  <li><b>«التطبيق تالف»</b> (macOS): سببها أن ملف التثبيت غير موثّق؛ يكفي فتحه مرة واحدة بالنقر بزر الفأرة الأيمن ← فتح، وبعدها يُكمل التطبيق التحقق الذاتي تلقائيًا.</li>
-  <li><b>فشل التحقق من التحديثات</b>: يتطلب الوصول إلى <code>api.github.com</code>؛ وإذا كانت الشبكة مقيّدة فأعد المحاولة لاحقًا.</li>
-</ul>
-</section>
 
 </div>
 </body>

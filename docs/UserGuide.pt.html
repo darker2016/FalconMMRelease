@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Guia do usuário do FalconMM</title>
+<style>
+  :root { color-scheme: light; }
+  body { font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; background: #f6f7f9; color: #1c1e21; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { font-size: 26px; } h2 { font-size: 20px; margin-top: 40px; border-bottom: 1px solid #e2e4e8; padding-bottom: 6px; } h3 { font-size: 16px; }
+  .lang-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
+  .lang-nav a { display: inline-block; padding: 4px 10px; border-radius: 14px; background: #fff; border: 1px solid #d9dce1; color: #1c1e21; text-decoration: none; font-size: 13px; }
+  .lang-nav a:hover { border-color: #8a5cf6; color: #6d3ef0; }
+  section { background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; padding: 20px 24px; margin-top: 18px; }
+  code { background: #f0f1f4; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  kbd { background: #eef0f3; border: 1px solid #d0d3d9; border-bottom-width: 2px; border-radius: 4px; padding: 0 6px; font-size: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid #e2e4e8; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #f7f8fa; }
+  .note { background: #fff8e6; border: 1px solid #f0dfa8; border-radius: 8px; padding: 10px 14px; font-size: 14px; }
+  .toc a { color: #6d3ef0; }
+  [dir="rtl"] section { text-align: right; }
+
+  .lang-nav a[aria-current='page'] { border-color: #6d3ef0; color: #6d3ef0; font-weight: 600; }
+  .version-line { color: #5b6270; font-size: 14px; margin: 6px 0 0; }
+  .version-line a { color: #6d3ef0; }
+  code, kbd { unicode-bidi: isolate; direction: ltr; }
+  html[dir='rtl'] .wrap { text-align: right; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-top: 18px; }
+  .cards a { display: block; background: #fff; border: 1px solid #e2e4e8; border-radius: 10px; padding: 14px 16px; text-decoration: none; color: #1c1e21; }
+  .cards a:hover { border-color: #8a5cf6; }
+  .cards b { display: block; font-size: 17px; }
+  .cards span { display: block; color: #5b6270; font-size: 13px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="lang-nav" aria-label="Language">
+  <a href="UserGuide.zh-CN.html" hreflang="zh-CN">简体中文</a>
+  <a href="UserGuide.zh-TW.html" hreflang="zh-TW">繁體中文</a>
+  <a href="UserGuide.en.html" hreflang="en">English</a>
+  <a href="UserGuide.ja.html" hreflang="ja">日本語</a>
+  <a href="UserGuide.ko.html" hreflang="ko">한국어</a>
+  <a href="UserGuide.fr.html" hreflang="fr">Français</a>
+  <a href="UserGuide.de.html" hreflang="de">Deutsch</a>
+  <a href="UserGuide.es.html" hreflang="es">Español</a>
+  <a href="UserGuide.pt.html" hreflang="pt" aria-current="page">Português</a>
+  <a href="UserGuide.ru.html" hreflang="ru">Русский</a>
+  <a href="UserGuide.ar.html" hreflang="ar">العربية</a>
+</nav>
+<h1>Guia do usuário do FalconMM</h1>
+<p>FalconMM é uma biblioteca de mídia local-first: capturas de tela, gravações de tela e capturas do navegador passam por uma caixa de entrada para revisão, uma árvore de etiquetas organiza os arquivos, um modelo de visão (VLM) pode etiquetar automaticamente (opcional), e o MCP permite que assistentes de IA façam buscas.</p>
+<p class="version-line">Português · v0.4.0 · <a href="https://github.com/darker2016/FalconMMRelease/releases">Downloads</a> · <a href="UserGuide.html">Todos os idiomas</a></p>
+<h3>1. Instalação</h3>
+<ul>
+  <li><b>macOS</b>: baixe o <code>FalconMM-0.4.0-arm64.dmg</code> (Apple silicon) ou o <code>FalconMM-0.4.0-x64.dmg</code> (Intel), abra e arraste o FalconMM para <i>Aplicativos</i>. O build não é notarizado; na primeira abertura, clique com o botão direito → <i>Abrir</i> quando o macOS pedir (ou use Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim).</li>
+  <li><b>Windows</b>: baixe o <code>FalconMM-Setup-0.4.0.exe</code> e siga o assistente.</li>
+  <li>Na primeira execução é criada a pasta da biblioteca (padrão <code>~/Documents/FalconMM素材库</code>); o banco de dados e os arquivos ficam no seu computador.</li>
+</ul>
+<h3>2. Idioma da interface</h3>
+<p>O aplicativo segue por padrão o <b>idioma do sistema</b> (11 idiomas: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). Dá para trocar a qualquer momento em <b>Configurações → Geral e atualizações → Idioma</b>; o árabe usa layout da direita para a esquerda.</p>
+<h3>3. Atualizações do software</h3>
+<ul>
+  <li>Por padrão, o aplicativo verifica na inicialização a versão mais recente do repositório de versões (github.com/darker2016/FalconMMRelease); dá para desativar nas Configurações.</li>
+  <li><b>Windows</b>: depois do download, clique em <i>Instalar atualização</i> — o instalador fecha o aplicativo e atualiza no lugar, mantendo todos os dados e configurações.</li>
+  <li><b>macOS</b>: clicar em <i>Instalar atualização</i> abre o DMG baixado; arraste o FalconMM para <i>Aplicativos</i> para substituí-lo. O pareamento e os dados são mantidos.</li>
+</ul>
+<h3>4. Extensão de navegador</h3>
+<ol>
+  <li>Baixe o <code>FalconMM-Extension-0.4.0.zip</code> e <b>descompacte</b>. Abra <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>), ative o <i>Modo do desenvolvedor</i> → <i>Carregar sem compactação</i> → escolha a pasta <code>extension</code> descompactada.</li>
+  <li>Clique no ícone da extensão e faça o pareamento com o FalconMM seguindo as instruções (Configurações → Extensão de navegador → Gerar código de pareamento).</li>
+  <li>Abra o popup em qualquer página para capturar imagens / vídeos na caixa de entrada; nos sites compatíveis dá para clicar em <i>Baixar vídeo atual</i>.</li>
+</ol>
+<p><b>Sites compatíveis</b>: Bilibili, Douyin, Xiaohongshu (RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. Os sites internacionais exigem que sua rede consiga acessá-los; YouTube / TikTok / X / Instagram / Vimeo não têm script de reserva no Tampermonkey — as falhas voltam sempre com um motivo específico. IQiYi / Youku / Tencent Video / MangoTV são protegidos por DRM e não têm download.</p>
+<h3>5. Funções do dia a dia</h3>
+<ul>
+  <li><b>Captura de tela / gravação</b>: <kbd>⌘/Ctrl+Shift+U</kbd> captura de tela, <kbd>⌘/Ctrl+Shift+K</kbd> gravação de tela (teclas remapeáveis nas Configurações); os resultados vão direto para a caixa de entrada.</li>
+  <li><b>Caixa de entrada</b>: revise os itens um a um ou em lote, “etiquetar → arquivar”; arquivar só muda o status, não move os arquivos originais e pode ser desfeito.</li>
+  <li><b>Árvore de etiquetas</b>: clique nas etiquetas da árvore à esquerda para filtrar; “Sem categoria” é um nó do sistema; as operações avançadas ficam na página Gerenciar etiquetas.</li>
+  <li><b>Etiquetagem por IA (opcional)</b>: Configurações → Etiquetagem por IA aceita qualquer endpoint compatível com OpenAI ou um Ollama local; sem configurar, nada mais é afetado. Os resultados do reconhecimento ficam primeiro como “sugestões” e só viram etiquetas oficiais depois da confirmação.</li>
+  <li><b>Importação de bibliotecas de terceiros</b>: Configurações → Segurança dos dados → importação de terceiros (Eagle / Billfish / digiKam); a biblioteca de origem é lida sem alterações e os arquivos são copiados para a biblioteca.</li>
+  <li><b>MCP</b>: Configurações → MCP permite que assistentes de IA de desktop, como o Claude, encontrem seus arquivos via MCP.</li>
+</ul>
+<h3>6. Desenvolvimento da extensão</h3>
+<p>O código-fonte da extensão e o guia do desenvolvedor são publicados no mesmo repositório de versões (pasta <code>extension-source/</code>, com <code>DEVELOPER.md</code>). Adicionar um site mexe só na extensão: registro de sites + função de análise + resolver de página; no handshake, a extensão informa automaticamente os sites novos ao aplicativo de desktop para liberar o download, sem precisar mudar o desktop. Veja o <code>DEVELOPER.md</code> para detalhes.</p>
+<h3>7. Perguntas frequentes</h3>
+<ul>
+  <li><b>Falha no download / arquivo vazio</b>: as URLs dos sites são assinadas e expiram rápido — atualize a página primeiro e clique de novo no download; se continuar falhando, veja o motivo específico indicado no erro.</li>
+  <li><b>“O aplicativo está danificado”</b> (macOS): é por falta de notarização — basta abrir uma vez com o botão direito → Abrir; depois o aplicativo conclui a própria verificação automaticamente.</li>
+  <li><b>Falha ao verificar atualizações</b>: é preciso acesso a <code>api.github.com</code>; com a rede restrita, tente mais tarde.</li>
+</ul>
+
+</div>
+</body>
+</html>
