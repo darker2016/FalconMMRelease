@@ -51,11 +51,11 @@
 </nav>
 <h1>Guide d’utilisation FalconMM</h1>
 <p>FalconMM est une médiathèque « local-first » : les captures d’écran, les enregistrements d’écran et les captures du navigateur passent par une boîte de réception pour validation, une arborescence de tags range les ressources, un modèle de vision (VLM) peut optionnellement étiqueter automatiquement, et MCP permet aux assistants IA d’effectuer des recherches.</p>
-<p class="version-line">Français · v0.4.0 · <a href="https://github.com/darker2016/FalconMMRelease/releases">Téléchargements</a> · <a href="UserGuide.html">Toutes les langues</a></p>
+<p class="version-line">Français · v0.4.1 · <a href="https://github.com/darker2016/FalconMMRelease/releases">Téléchargements</a> · <a href="UserGuide.html">Toutes les langues</a></p>
 <h3>1. Installation</h3>
 <ul>
-  <li><b>macOS</b> : téléchargez <code>FalconMM-0.4.0-arm64.dmg</code> (Apple silicon) ou <code>FalconMM-0.4.0-x64.dmg</code> (Intel), ouvrez-le puis faites glisser FalconMM dans <i>Applications</i>. Le build n’est pas notarié : au premier lancement, faites un clic droit → <i>Ouvrir</i> quand macOS le demande (ou passez par Réglages Système → Confidentialité et sécurité → Ouvrir quand même).</li>
-  <li><b>Windows</b> : téléchargez <code>FalconMM-Setup-0.4.0.exe</code> et suivez l’assistant.</li>
+  <li><b>macOS</b> : téléchargez <code>FalconMM-0.4.1-arm64.dmg</code> (Apple silicon) ou <code>FalconMM-0.4.1-x64.dmg</code> (Intel), ouvrez-le puis faites glisser FalconMM dans <i>Applications</i>. Le build n’est pas notarié : au premier lancement, faites un clic droit → <i>Ouvrir</i> quand macOS le demande (ou passez par Réglages Système → Confidentialité et sécurité → Ouvrir quand même).</li>
+  <li><b>Windows</b> : téléchargez <code>FalconMM-Setup-0.4.1.exe</code> et suivez l’assistant.</li>
   <li>Au premier lancement, un dossier de bibliothèque est créé (par défaut <code>~/Documents/FalconMM素材库</code>) ; la base de données et les médias restent sur votre machine.</li>
 </ul>
 <h3>2. Langue de l’interface</h3>
@@ -68,10 +68,11 @@
 </ul>
 <h3>4. Extension navigateur</h3>
 <ol>
-  <li>Téléchargez <code>FalconMM-Extension-0.4.0.zip</code> et <b>décompressez</b>-le. Ouvrez <code>chrome://extensions</code> (Edge : <code>edge://extensions</code>), activez le <i>Mode développeur</i> → <i>Charger l’extension non empaquetée</i> → choisissez le dossier <code>extension</code> décompressé.</li>
+  <li>Téléchargez <code>FalconMM-Extension-0.4.1.zip</code> et <b>décompressez</b>-le. Ouvrez <code>chrome://extensions</code> (Edge : <code>edge://extensions</code>), activez le <i>Mode développeur</i> → <i>Charger l’extension non empaquetée</i> → choisissez le dossier <code>extension</code> décompressé.</li>
   <li>Cliquez sur l’icône de l’extension et appariez-la avec FalconMM (Réglages → Extension navigateur → Générer un code d’appariement).</li>
   <li>Ouvrez la fenêtre contextuelle sur n’importe quelle page pour capturer des images / vidéos vers la boîte de réception ; sur les sites pris en charge, utilisez <i>Télécharger la vidéo courante</i>.</li>
 </ol>
+<p>L’interface de l’extension suit la langue d’interface de votre navigateur (les mêmes 11 langues ; les langues non prises en charge basculent sur l’anglais ; disposition de droite à gauche pour l’arabe).</p>
 <p><b>Sites pris en charge</b> : Bilibili, Douyin, Xiaohongshu (RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. Les sites internationaux exigent que votre réseau puisse y accéder ; YouTube / TikTok / X / Instagram / Vimeo n’ont pas de solution de secours Tampermonkey — les échecs s’accompagnent toujours d’une raison précise. IQiYi / Youku / Tencent Video / MangoTV sont protégés par DRM et ne sont pas pris en charge pour le téléchargement.</p>
 <h3>5. Fonctions courantes</h3>
 <ul>

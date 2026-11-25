@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "FalconMM Inbox"
+  },
+  "extDesc": {
+    "message": "Enregistrez images et vidéos du Web et vidéos de Bilibili, YouTube, TikTok, X, Instagram, Vimeo dans votre bibliothèque FalconMM."
+  },
+  "extActionTitle": {
+    "message": "Capturer vers FalconMM Inbox"
+  }
+}

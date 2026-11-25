@@ -1,29 +1,25 @@
-# FalconMM v0.4.0 · Release Notes
+# FalconMM v0.4.1
 
 ## 简体中文
 
 **本次更新**
 
-1. **11 种界面语言**：简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية。安装后默认跟随系统语言，可在「设置 → 通用与更新」随时切换；阿拉伯语为从右到左布局。
-2. **自动更新**：应用会检查本发布库的最新版本（可在设置关闭自动检查）。Windows 下载后静默升级（保留数据）；macOS 下载后打开 DMG 拖入「应用程序」完成更新。
-3. **浏览器插件新增 5 个国际站点**：YouTube、TikTok、X (Twitter)、Instagram、Vimeo —— 插件解析地址，Falcon 桌面端带 Referer 下载入库；YouTube 优先合并轨直链、分离轨自动无损合并音视频。这些站点需要你的网络可以访问；解析失败会给出具体原因。
-4. **插件源码开放**：本仓库 `extension-source/` 目录提供插件完整源码与开发者指南（DEVELOPER.md）。开发者只需在插件里注册新站点，握手时会自动上报桌面端放行下载，无需改动桌面端。
-5. 常规修复与体验优化（预览 Range 支持、右键菜单、第三方素材库导入等，详见使用说明）。
+1. **浏览器插件支持 11 种界面语言**：插件弹窗、后台提示与站点解析失败的原因都跟随浏览器界面语言（简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية），不支持的语言显示英文，阿拉伯语为从右到左布局。应用安装包内自带的插件副本与独立的插件 zip 均已更新。
+2. **修复**：B 站「充电专属 / 大会员 / 付费」内容只能看到试看片段时的提示，不再带多余的 `Error: ` 前缀，也不再做没有意义的自动重试。
+3. **发布库首页改版**：安装包改为可点击的下载直链；新增界面截图（主界面与浏览器插件，简体中文 / English 各一张）；使用说明拆成每种语言一个独立文件；补回此前缺失的插件开发者指南 `DEVELOPER.md`。
 
-**安装包**：`FalconMM-0.4.0-arm64.dmg`（Apple 芯片）/ `FalconMM-0.4.0-x64.dmg`（Intel）/ `FalconMM-Setup-0.4.0.exe`（Windows x64）/ `FalconMM-Extension-0.4.0.zip`（解压加载）。
+**安装包**：`FalconMM-0.4.1-arm64.dmg`（Apple 芯片）/ `FalconMM-0.4.1-x64.dmg`（Intel）/ `FalconMM-Setup-0.4.1.exe`（Windows x64）/ `FalconMM-Extension-0.4.1.zip`（解压后以开发者模式加载）。
 
-macOS 包未公证：首次打开请右键 → 打开。
+已安装 0.4.0 的用户：在「设置 → 通用与更新」点「检查更新」，或等待应用启动后自动检查。macOS 包未公证：首次打开请右键 → 打开。
 
 ## English
 
 **Highlights**
 
-1. **11 interface languages**: 简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية. Follows the system language by default; switch any time in Settings → General & Updates. Arabic ships with a right-to-left layout.
-2. **Auto-update**: the app checks this release repository for new versions (auto-check can be disabled). Windows installs silently in place after download; macOS opens the downloaded DMG for a drag-to-Applications update.
-3. **5 new international sites in the browser extension**: YouTube, TikTok, X (Twitter), Instagram, Vimeo — the extension resolves media URLs, Falcon downloads with proper Referer and imports into the library; YouTube progressive streams are preferred and separate video/audio tracks are losslessly remuxed. These sites require reachable network conditions; failures always come back with a specific reason.
-4. **Extension source code published**: `extension-source/` in this repository contains the full extension source and a developer guide (DEVELOPER.md). Developers add sites in the extension only — new sites are auto-registered with the desktop app during handshake.
-5. Usual fixes and polish (HTTP Range preview support, context menu, third-party library import, etc.).
+1. **The browser extension now speaks 11 languages**: the popup, background messages and site-specific failure reasons follow your browser's UI language (简体中文 / 繁體中文 / English / 日本語 / 한국어 / Français / Deutsch / Español / Português / Русский / العربية). Unsupported languages fall back to English; Arabic uses a right-to-left layout. Both the extension bundled inside the app and the standalone zip are updated.
+2. **Fix**: when a Bilibili video only offers a preview (Charge-exclusive / Premium / paid), the message no longer carries a stray `Error: ` prefix and no longer triggers a pointless automatic retry.
+3. **Release page refreshed**: installers are now direct download links; interface screenshots were added (main window and browser extension, in 简体中文 and English); the user guide is split into one file per language; the previously missing extension developer guide `DEVELOPER.md` is restored.
 
-**Artifacts**: `FalconMM-0.4.0-arm64.dmg` (Apple silicon) / `FalconMM-0.4.0-x64.dmg` (Intel) / `FalconMM-Setup-0.4.0.exe` (Windows x64) / `FalconMM-Extension-0.4.0.zip` (load unpacked).
+**Artifacts**: `FalconMM-0.4.1-arm64.dmg` (Apple silicon) / `FalconMM-0.4.1-x64.dmg` (Intel) / `FalconMM-Setup-0.4.1.exe` (Windows x64) / `FalconMM-Extension-0.4.1.zip` (unzip, then Load unpacked).
 
-The macOS build is not notarized: right-click → Open on first launch.
+Already on 0.4.0? Open **Settings → General & Updates → Check for updates**, or just wait for the automatic check at startup. The macOS builds are not notarized: right-click → Open on first launch.

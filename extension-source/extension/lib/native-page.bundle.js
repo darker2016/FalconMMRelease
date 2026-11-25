@@ -504,6 +504,13 @@
   }
 
   // extension/src/native-page.js
+  function nativeError(key, vars, options = {}) {
+    const error = new Error(key);
+    error.key = key;
+    error.vars = vars || {};
+    if (options.retryable !== void 0) error.retryable = options.retryable;
+    return error;
+  }
   function bvidFromLocation() {
     return location.pathname.match(/\/video\/(BV[0-9A-Za-z]+)/)?.[1] || "";
   }
@@ -519,16 +526,22 @@
     const res = await fetch(`https://api.bilibili.com/x/web-interface/view?bvid=${encodeURIComponent(bvid)}`, {
       credentials: "include"
     });
-    if (!res.ok) throw new Error(`\u8BFB\u53D6\u89C6\u9891\u4FE1\u606F\u5931\u8D25 HTTP ${res.status}`);
+    if (!res.ok) throw nativeError("native.bilibili.viewFetchFailed", { status: res.status });
     const body = await res.json();
-    if (body.code !== 0) throw new Error(body.message || "\u8BFB\u53D6\u89C6\u9891\u4FE1\u606F\u5931\u8D25");
+    if (body.code !== 0) {
+      if (body.message) throw new Error(body.message);
+      throw nativeError("native.bilibili.viewFailed");
+    }
     return body.data || {};
   }
   async function bilibiliPlayurl(url) {
     const res = await fetch(url, { credentials: "include" });
-    if (!res.ok) throw new Error(`\u8BFB\u53D6\u64AD\u653E\u5730\u5740\u5931\u8D25 HTTP ${res.status}`);
+    if (!res.ok) throw nativeError("native.bilibili.playurlFetchFailed", { status: res.status });
     const body = await res.json();
-    if (body.code !== 0) throw new Error(body.message || "\u8BFB\u53D6\u64AD\u653E\u5730\u5740\u5931\u8D25");
+    if (body.code !== 0) {
+      if (body.message) throw new Error(body.message);
+      throw nativeError("native.bilibili.playurlFailed");
+    }
     return body;
   }
   function bilibiliPlayurlQuery(fnval) {
@@ -551,23 +564,21 @@
     const coveredSec = Math.round(bilibiliCoveredMs(body) / 1e3);
     const totalSec = Math.round((Number(context.fullDurationMs) || 0) / 1e3);
     const span = `${clockOf(coveredSec)} / ${clockOf(totalSec)}`;
-    let message;
+    let error;
     if (context.upowerExclusive && !context.upowerPlay) {
-      message = `\u8BE5\u89C6\u9891\u662F UP \u4E3B\u5145\u7535\u4E13\u5C5E\uFF1A\u5F53\u524D\u8D26\u53F7\u672A\u5145\u7535\u8BE5 UP \u4E3B\uFF0C\u53EA\u80FD\u62FF\u5230\u8BD5\u770B\u90E8\u5206\uFF08${span}\uFF09\u3002\u8BF7\u5728 B \u7AD9\u5145\u7535\u540E\u7528\u540C\u4E00\u8D26\u53F7\u91CD\u65B0\u4E0B\u8F7D\u3002`;
+      error = nativeError("native.bilibili.upowerExclusive", { span }, { retryable: false });
     } else if (context.vip) {
-      message = `\u8BE5\u5267\u96C6\u662F\u5927\u4F1A\u5458\u4E13\u4EAB\uFF1A\u5F53\u524D\u8D26\u53F7\u672A\u5F00\u901A\u5927\u4F1A\u5458\uFF08\u6216\u672A\u767B\u5F55\uFF09\uFF0C\u53EA\u80FD\u62FF\u5230\u8BD5\u770B\u90E8\u5206\uFF08${span}\uFF09\u3002\u5F00\u901A\u5927\u4F1A\u5458\u540E\u7528\u540C\u4E00\u8D26\u53F7\u91CD\u65B0\u4E0B\u8F7D\u3002`;
+      error = nativeError("native.bilibili.vipExclusive", { span }, { retryable: false });
     } else if (context.paid) {
-      message = `\u8BE5\u89C6\u9891\u9700\u8981\u4ED8\u8D39\u8D2D\u4E70\uFF1A\u5F53\u524D\u8D26\u53F7\u6CA1\u6709\u5B8C\u6574\u89C2\u770B\u6743\u9650\uFF0C\u53EA\u80FD\u62FF\u5230\u8BD5\u770B\u90E8\u5206\uFF08${span}\uFF09\u3002\u8D2D\u4E70\u540E\u7528\u540C\u4E00\u8D26\u53F7\u91CD\u65B0\u4E0B\u8F7D\u3002`;
+      error = nativeError("native.bilibili.paidRequired", { span }, { retryable: false });
     } else {
-      message = `\u53EA\u62FF\u5230\u8BD5\u770B\u90E8\u5206\uFF08${span}\uFF09\uFF1A\u5F53\u524D\u8D26\u53F7\u6CA1\u6709\u8BE5\u89C6\u9891\u7684\u5B8C\u6574\u89C2\u770B\u6743\u9650\u3002`;
+      error = nativeError("native.bilibili.previewOnly", { span }, { retryable: false });
     }
-    const error = new Error(message);
-    error.retryable = false;
     return error;
   }
   function bilibiliMediaFromPlayurl(body, title, context) {
     const gap = bilibiliPreviewGapMs(body, context.fullDurationMs);
-    if (gap > 0) throw new Error(bilibiliPreviewError(body, context));
+    if (gap > 0) throw bilibiliPreviewError(body, context);
     const dash = selectBilibiliDash(body);
     if (dash.ok) {
       const baseName = `${sanitizeFileName(title, "bilibili")}-${dash.video.quality}`;
@@ -579,12 +590,10 @@
     }
     const parsed = parseBilibiliPlayurl(body);
     if (!parsed.ok) {
-      throw new Error(
-        parsed.hasDash ? "\u6CA1\u6709\u4ECE DASH \u7ED3\u679C\u91CC\u9009\u51FA\u53EF\u4E0B\u8F7D\u7684\u8F68\u9053\uFF1B\u8BF7\u5237\u65B0\u9875\u9762\u540E\u91CD\u8BD5" : "\u6CA1\u6709\u62FF\u5230\u53EF\u4E0B\u8F7D\u7684 MP4 \u5730\u5740"
-      );
+      throw parsed.hasDash ? nativeError("native.bilibili.dashTrackUnavailable") : nativeError("native.bilibili.noMp4");
     }
     if (parsed.parts.some((part) => /\.flv(\?|$)/i.test(part.url))) {
-      throw new Error("\u8BE5\u89C6\u9891\u53EA\u8FD4\u56DE FLV \u5355\u6587\u4EF6\uFF0C\u5F53\u524D\u7D20\u6750\u5E93\u4E0D\u652F\u6301 FLV\uFF1B\u8BF7\u6539\u7528\u811A\u672C\u4E0B\u8F7D MP4");
+      throw nativeError("native.bilibili.flvOnly");
     }
     return {
       media: mediaWithNames(title, parsed.parts.map((part) => ({ url: part.url, kind: "video" }))),
@@ -612,7 +621,7 @@
       context.upowerPlay = context.upowerPlay || Boolean(view.is_upower_play);
       context.fullDurationMs = durationSec * 1e3;
     }
-    if (!cid) throw new Error("\u6CA1\u6709\u627E\u5230\u5F53\u524D\u89C6\u9891\u7684 cid");
+    if (!cid) throw nativeError("native.bilibili.ugcCidNotFound");
     const body = await bilibiliPlayurl(
       `https://api.bilibili.com/x/player/playurl?bvid=${encodeURIComponent(bvid)}&cid=${cid}&${bilibiliPlayurlQuery(4048)}`
     );
@@ -638,11 +647,14 @@
     const res = await fetch(`https://api.bilibili.com/pgc/view/web/season?${seasonParam}`, {
       credentials: "include"
     });
-    if (!res.ok) throw new Error(`\u8BFB\u53D6\u5267\u96C6\u4FE1\u606F\u5931\u8D25 HTTP ${res.status}`);
+    if (!res.ok) throw nativeError("native.bilibili.seasonFetchFailed", { status: res.status });
     const seasonBody = await res.json();
-    if (seasonBody.code !== 0) throw new Error(seasonBody.message || "\u8BFB\u53D6\u5267\u96C6\u4FE1\u606F\u5931\u8D25");
+    if (seasonBody.code !== 0) {
+      if (seasonBody.message) throw new Error(seasonBody.message);
+      throw nativeError("native.bilibili.seasonFailed");
+    }
     const season = parseBilibiliPgcSeason(seasonBody, epId);
-    if (!season.ok || !season.cid) throw new Error("\u6CA1\u6709\u627E\u5230\u5F53\u524D\u5267\u96C6\u7684 cid");
+    if (!season.ok || !season.cid) throw nativeError("native.bilibili.pgcCidNotFound");
     const episodeTitle = season.episodeTitle;
     const displayTitle = [season.title, episodeTitle].filter(Boolean).join(" ") || document.title.replace(/\s*-\s*哔哩哔哩.*$/i, "").trim();
     const body = await bilibiliPlayurl(
@@ -672,7 +684,7 @@
     const bangumi = bilibiliBangumiRoute();
     if (bangumi) return resolveBilibiliPgc(bangumi);
     const bvid = bvidFromLocation();
-    if (!bvid) throw new Error("\u5F53\u524D\u9875\u9762\u4E0D\u662F B \u7AD9\u89C6\u9891 / \u756A\u5267\u9875");
+    if (!bvid) throw nativeError("native.bilibili.unsupportedPage");
     return resolveBilibiliUgc(bvid);
   }
   function douyinRouterData() {
@@ -719,7 +731,7 @@
   function resolveDouyin() {
     let parsed = parseDouyinRouterData(readDouyinPlayerMedia());
     if (!parsed.ok) parsed = parseDouyinRouterData(douyinRouterData());
-    if (!parsed.ok) throw new Error("\u6CA1\u6709\u8BFB\u53D6\u5230\u5F53\u524D\u6296\u97F3\u4F5C\u54C1\u6570\u636E\uFF08\u64AD\u653E\u5668\u4E0E\u9875\u9762\u6570\u636E\u90FD\u4E3A\u7A7A\uFF09\uFF1B\u8BF7\u5148\u64AD\u653E\u4E00\u6B21\u6216\u5237\u65B0\u9875\u9762\u518D\u8BD5");
+    if (!parsed.ok) throw nativeError("native.douyin.noData");
     const title = parsed.title || "douyin";
     const playing = playingVideoUrl();
     if (playing && parsed.kind === "video" && parsed.media.length === 1) {
@@ -756,9 +768,7 @@
     const state = window.__INITIAL_STATE__ || window.__INITIAL_SSR_STATE__ || null;
     const parsed = parseXiaohongshuState(state, xhsNoteIdFromLocation());
     if (!parsed.ok) {
-      throw new Error(
-        parsed.reason === "video_url_missing" ? "\u8BC6\u522B\u5230\u89C6\u9891\u7B14\u8BB0\uFF0C\u4F46\u9875\u9762\u8FD8\u6CA1\u7ED9\u51FA\u89C6\u9891\u5730\u5740\uFF1B\u8BF7\u5148\u64AD\u653E\u4E00\u6B21\u518D\u8BD5\uFF08\u4E0D\u4F1A\u628A\u5C01\u9762\u5F53\u89C6\u9891\u4E0B\u8F7D\uFF09" : "\u6CA1\u6709\u8BFB\u53D6\u5230\u5F53\u524D\u5C0F\u7EA2\u4E66\u7B14\u8BB0\u6570\u636E\uFF1B\u8BF7\u5237\u65B0\u9875\u9762\u6216\u5148\u64AD\u653E\u4E00\u6B21\u518D\u8BD5"
-      );
+      throw parsed.reason === "video_url_missing" ? nativeError("native.xiaohongshu.videoUrlMissing") : nativeError("native.xiaohongshu.noData");
     }
     const title = parsed.title || "xiaohongshu";
     return {
@@ -787,28 +797,25 @@
         context: { client: { clientName: "ANDROID", clientVersion: "19.09.37", androidSdkVersion: 30, hl: "en" } }
       })
     });
-    if (!res.ok) throw new Error(`\u8BFB\u53D6 YouTube \u64AD\u653E\u6570\u636E\u5931\u8D25 HTTP ${res.status}`);
+    if (!res.ok) throw nativeError("native.youtube.playerFetchFailed", { status: res.status });
     return res.json();
   }
   function youtubeError(parsed) {
-    const detail = parsed?.detail ? `\uFF1A${parsed.detail}` : "";
-    let message;
+    let error;
     if (parsed?.reason === "login_required") {
-      message = "\u8BE5\u89C6\u9891\u9700\u8981\u767B\u5F55\u89C2\u770B\uFF08\u79C1\u5BC6\u6216\u5E74\u9F84\u9650\u5236\uFF09\uFF0C\u8BF7\u5728\u6D4F\u89C8\u5668\u767B\u5F55\u540E\u91CD\u8BD5";
+      error = nativeError("native.youtube.loginRequired", void 0, { retryable: false });
     } else if (parsed?.reason === "needs_decipher") {
-      message = "\u5F53\u524D\u53EA\u62FF\u5230\u9700\u8981\u7AD9\u70B9\u7B7E\u540D\u89E3\u7801\u7684\u89C6\u9891\u6D41\uFF08signatureCipher\uFF09\uFF0C\u63D2\u4EF6\u4E0D\u9006\u5411\u7B7E\u540D\uFF1B\u8BF7\u5237\u65B0\u9875\u9762\u540E\u91CD\u8BD5\uFF0C\u6216\u7A0D\u540E\u518D\u8BD5";
+      error = nativeError("native.youtube.needsDecipher");
     } else if (parsed?.reason === "unplayable") {
-      message = `\u8BE5\u89C6\u9891\u65E0\u6CD5\u64AD\u653E${detail}\uFF0C\u8BF7\u786E\u8BA4\u89C6\u9891\u53EF\u6B63\u5E38\u89C2\u770B\u540E\u91CD\u8BD5`;
+      error = parsed.detail ? nativeError("native.youtube.unplayableWithReason", { reason: parsed.detail }) : nativeError("native.youtube.unplayable");
     } else {
-      message = "\u6CA1\u6709\u62FF\u5230\u53EF\u4E0B\u8F7D\u7684\u89C6\u9891\u6D41\uFF1B\u8BF7\u5148\u64AD\u653E\u4E00\u6B21\u518D\u8BD5";
+      error = nativeError("native.youtube.noStream");
     }
-    const error = new Error(message);
-    if (parsed?.reason === "login_required") error.retryable = false;
     return error;
   }
   async function resolveYouTube() {
     const videoId = youtubeVideoId();
-    if (!videoId) throw new Error("\u5F53\u524D\u9875\u9762\u4E0D\u662F YouTube \u89C6\u9891\u9875");
+    if (!videoId) throw nativeError("native.youtube.unsupportedPage");
     let parsed = parseYoutubePlayerResponse(window.ytInitialPlayerResponse || null);
     if (!parsed.ok) {
       parsed = parseYoutubePlayerResponse(await youtubePlayerFromAndroid(videoId));
@@ -852,11 +859,7 @@
     let parsed = parseTikTokRehydration(tiktokRehydrationPayload());
     if (!parsed.ok) parsed = parseTikTokLegacy(tiktokLegacyPayload());
     if (!parsed.ok) {
-      const error = new Error(
-        parsed.reason === "private" ? "\u8BE5 TikTok \u4F5C\u54C1\u662F\u79C1\u5BC6\u5185\u5BB9\u6216\u5DF2\u88AB\u5220\u9664\uFF0C\u65E0\u6CD5\u4E0B\u8F7D" : "\u6CA1\u6709\u8BFB\u53D6\u5230\u5F53\u524D TikTok \u4F5C\u54C1\u6570\u636E\uFF1B\u8BF7\u5148\u64AD\u653E\u4E00\u6B21\u6216\u5237\u65B0\u9875\u9762\u518D\u8BD5"
-      );
-      if (parsed.reason === "private") error.retryable = false;
-      throw error;
+      throw parsed.reason === "private" ? nativeError("native.tiktok.private", void 0, { retryable: false }) : nativeError("native.tiktok.noData");
     }
     const title = parsed.title || "tiktok";
     const playing = playingVideoUrl();
@@ -875,12 +878,13 @@
   }
   async function resolveTwitter() {
     const statusId = location.pathname.match(/\/status(?:es)?\/(\d+)/)?.[1];
-    if (!statusId) throw new Error("\u5F53\u524D\u9875\u9762\u4E0D\u662F X (Twitter) \u5355\u6761\u63A8\u6587\u9875\uFF1B\u8BF7\u6253\u5F00\u5177\u4F53\u63A8\u6587\u540E\u91CD\u8BD5");
+    if (!statusId) throw nativeError("native.twitter.unsupportedPage");
     const res = await fetch(`https://cdn.syndication.twimg.com/tweet-result?id=${statusId}&token=x&lang=en`);
-    if (!res.ok) throw new Error(`\u8BFB\u53D6\u63A8\u6587\u6570\u636E\u5931\u8D25 HTTP ${res.status}`);
+    if (!res.ok) throw nativeError("native.twitter.tweetFetchFailed", { status: res.status });
     const parsed = parseTwitterTweetResult(await res.json());
     if (!parsed.ok) {
-      throw new Error(parsed.reason === "no_media" ? "\u8FD9\u6761\u63A8\u6587\u6CA1\u6709\u53EF\u4E0B\u8F7D\u7684\u89C6\u9891\u6216\u56FE\u7247" : `\u8BFB\u53D6\u63A8\u6587\u5A92\u4F53\u5931\u8D25${parsed.detail ? `\uFF1A${parsed.detail}` : ""}`);
+      if (parsed.reason === "no_media") throw nativeError("native.twitter.noMedia");
+      throw parsed.detail ? nativeError("native.twitter.mediaFailedWithReason", { reason: parsed.detail }) : nativeError("native.twitter.mediaFailed");
     }
     const title = parsed.title || `tweet-${statusId}`;
     return {
@@ -912,7 +916,7 @@
   }
   function resolveInstagram() {
     const shortcode = instagramShortcode();
-    if (!shortcode) throw new Error("\u5F53\u524D\u9875\u9762\u4E0D\u662F Instagram \u5E16\u5B50 / Reels \u9875");
+    if (!shortcode) throw nativeError("native.instagram.unsupportedPage");
     let parsed = parseInstagramWebInfo(instagramEmbeddedWebInfo(), shortcode);
     if (!parsed.ok) {
       parsed = parseInstagramOgMeta({
@@ -922,11 +926,7 @@
       });
     }
     if (!parsed.ok) {
-      const error = new Error(
-        parsed.reason === "video_url_missing" ? "\u8BC6\u522B\u5230\u89C6\u9891\u5E16\uFF0C\u4F46\u9875\u9762\u8FD8\u6CA1\u6709\u7ED9\u51FA\u89C6\u9891\u5730\u5740\uFF1B\u8BF7\u5148\u64AD\u653E\u4E00\u6B21\u6216\u5237\u65B0\u540E\u91CD\u8BD5" : "\u6CA1\u6709\u8BFB\u53D6\u5230\u8BE5 Instagram \u5E16\u5B50\u7684\u5A92\u4F53\u6570\u636E\uFF1B\u8BF7\u786E\u8BA4\u5E16\u5B50\u662F\u516C\u5F00\u5185\u5BB9\u3001\u5DF2\u767B\u5F55\uFF0C\u7136\u540E\u5237\u65B0\u91CD\u8BD5"
-      );
-      error.retryable = parsed.reason === "video_url_missing";
-      throw error;
+      throw parsed.reason === "video_url_missing" ? nativeError("native.instagram.videoUrlMissing") : nativeError("native.instagram.noData", void 0, { retryable: false });
     }
     const title = parsed.title || `instagram-${shortcode}`;
     return {
@@ -944,20 +944,16 @@
   }
   async function resolveVimeo() {
     const clipId = vimeoClipId();
-    if (!clipId) throw new Error("\u5F53\u524D\u9875\u9762\u4E0D\u662F Vimeo \u89C6\u9891\u9875");
+    if (!clipId) throw nativeError("native.vimeo.unsupportedPage");
     let payload = window.playerConfig || null;
     if (!payload) {
       const res = await fetch(`https://player.vimeo.com/video/${clipId}/config`, { credentials: "omit" });
-      if (!res.ok) throw new Error(`\u8BFB\u53D6 Vimeo \u64AD\u653E\u914D\u7F6E\u5931\u8D25 HTTP ${res.status}`);
+      if (!res.ok) throw nativeError("native.vimeo.configFetchFailed", { status: res.status });
       payload = await res.json();
     }
     const parsed = parseVimeoConfig(payload);
     if (!parsed.ok) {
-      const error = new Error(
-        parsed.reason === "dash_only" ? "\u8BE5\u89C6\u9891\u53EA\u63D0\u4F9B DASH/HLS \u81EA\u9002\u5E94\u6D41\uFF08\u65E0 MP4 \u76F4\u94FE\uFF09\uFF0C\u5F53\u524D\u4E0D\u652F\u6301\u4E0B\u8F7D\uFF1B\u6362\u516C\u5F00\u7684 MP4 \u89C6\u9891\u53EF\u4E0B\u8F7D" : "\u6CA1\u6709\u62FF\u5230\u53EF\u4E0B\u8F7D\u7684 Vimeo \u89C6\u9891\u5730\u5740\uFF1B\u8BF7\u786E\u8BA4\u89C6\u9891\u516C\u5F00\u53EF\u64AD\u653E"
-      );
-      if (parsed.reason === "dash_only") error.retryable = false;
-      throw error;
+      throw parsed.reason === "dash_only" ? nativeError("native.vimeo.dashOnly", void 0, { retryable: false }) : nativeError("native.vimeo.noUrl");
     }
     const title = parsed.title || `vimeo-${clipId}`;
     return {
@@ -988,9 +984,9 @@
         return await resolveInstagram();
       }
       if (host === "vimeo.com" || host.endsWith(".vimeo.com")) return await resolveVimeo();
-      return { ok: false, message: "\u5F53\u524D\u9875\u9762\u4E0D\u662F\u53D7\u652F\u6301\u7684\u7AD9\u70B9\u9875\u9762" };
+      return { ok: false, message: "native.unsupportedSite", key: "native.unsupportedSite" };
     } catch (e) {
-      return { ok: false, message: String(e?.message || e), retryable: e?.retryable !== false };
+      return { ok: false, message: String(e?.message || e), key: e?.key, vars: e?.vars, retryable: e?.retryable !== false };
     }
   };
   window.__falconPageMeta = () => {

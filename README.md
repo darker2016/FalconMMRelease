@@ -6,16 +6,16 @@
 
 ## ⬇ 下载安装 / Download
 
-**最新版本 Latest release：[v0.4.0](https://github.com/darker2016/FalconMMRelease/releases/tag/v0.4.0)** ｜ [全部版本 All releases](https://github.com/darker2016/FalconMMRelease/releases)
+**最新版本 Latest release：[v0.4.1](https://github.com/darker2016/FalconMMRelease/releases/tag/v0.4.1)** ｜ [全部版本 All releases](https://github.com/darker2016/FalconMMRelease/releases)
 
 安装包挂在 Release 页面的 Assets 里（仓库文件列表中不放安装包）。 / Installers are attached to each release under **Assets**.
 
 | 平台 Platform | 安装包 Installer | 说明 Notes |
 | --- | --- | --- |
-| macOS · Apple 芯片 / Apple silicon | [**FalconMM-0.4.0-arm64.dmg**](https://github.com/darker2016/FalconMMRelease/releases/download/v0.4.0/FalconMM-0.4.0-arm64.dmg) | 打开 DMG，把 FalconMM 拖进「应用程序」 / Open the DMG and drag FalconMM into **Applications** |
-| macOS · Intel | [**FalconMM-0.4.0-x64.dmg**](https://github.com/darker2016/FalconMMRelease/releases/download/v0.4.0/FalconMM-0.4.0-x64.dmg) | 同上 / Same as above |
-| Windows 10 / 11 · x64 | [**FalconMM-Setup-0.4.0.exe**](https://github.com/darker2016/FalconMMRelease/releases/download/v0.4.0/FalconMM-Setup-0.4.0.exe) | 双击，按向导安装 / Run the setup wizard |
-| 浏览器插件 / Browser extension（Chrome · Edge） | [**FalconMM-Extension-0.4.0.zip**](https://github.com/darker2016/FalconMMRelease/releases/download/v0.4.0/FalconMM-Extension-0.4.0.zip) | 解压后「加载已解压的扩展程序」 / Unzip, then **Load unpacked** |
+| macOS · Apple 芯片 / Apple silicon | [**FalconMM-0.4.1-arm64.dmg**](https://github.com/darker2016/FalconMMRelease/releases/download/v0.4.1/FalconMM-0.4.1-arm64.dmg) | 打开 DMG，把 FalconMM 拖进「应用程序」 / Open the DMG and drag FalconMM into **Applications** |
+| macOS · Intel | [**FalconMM-0.4.1-x64.dmg**](https://github.com/darker2016/FalconMMRelease/releases/download/v0.4.1/FalconMM-0.4.1-x64.dmg) | 同上 / Same as above |
+| Windows 10 / 11 · x64 | [**FalconMM-Setup-0.4.1.exe**](https://github.com/darker2016/FalconMMRelease/releases/download/v0.4.1/FalconMM-Setup-0.4.1.exe) | 双击，按向导安装 / Run the setup wizard |
+| 浏览器插件 / Browser extension（Chrome · Edge） | [**FalconMM-Extension-0.4.1.zip**](https://github.com/darker2016/FalconMMRelease/releases/download/v0.4.1/FalconMM-Extension-0.4.1.zip) | 解压后「加载已解压的扩展程序」 / Unzip, then **Load unpacked** |
 
 - macOS 安装包未做公证：首次打开请右键 → 打开。 / The macOS builds are not notarized: right-click → **Open** on first launch.
 - 应用会自动检查本仓库的新版本：Windows 静默升级，macOS 打开新 DMG 引导安装。 / The app checks this repository for updates automatically: silent in-place upgrade on Windows, DMG install on macOS.
@@ -26,6 +26,9 @@
 | :---: | :---: |
 | <img src="docs/screenshots/app-zh-CN.jpg" alt="FalconMM 主界面（简体中文）" width="410"> | <img src="docs/screenshots/app-en.jpg" alt="FalconMM main window (English)" width="410"> |
 | 主界面 · 素材库与标签树 | Main window · library and tag tree |
+| <img src="docs/screenshots/extension-zh-CN.png" alt="浏览器插件弹窗（简体中文）" width="230"> | <img src="docs/screenshots/extension-en.png" alt="Browser extension popup (English)" width="230"> |
+| 浏览器插件 · 在网页上抓取图片 / 视频，受支持站点可「直接下载」 | Browser extension · capture images / videos from any page; direct download on supported sites |
+
 
 截图使用合成演示素材。 / Screenshots use synthetic demo assets.
 

@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "FalconMM Inbox",
-  "version": "0.4.0",
+  "name": "__MSG_extName__",
+  "version": "0.4.1",
   "minimum_chrome_version": "111",
-  "description": "把当前页图片/视频、B 站/抖音/小红书原生下载与脚本下载送进本机 FalconMM 素材库 Inbox；只走本机通道，不上传任何远端。",
+  "default_locale": "en",
+  "description": "__MSG_extDesc__",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmt972lFirzE9SYNxoxorSv3Rmmcqr8CiJOb4dKTKKXjYfiwnUFOTlheai29qVutE32FQxWiV0wfln17+8vion9+owcfzwn8bWhMumyZOkQ/3VDbdSxPC7N7rlwq83OQBtXn6Nd/hnxHoLCUh1qxVRMqEZRnNGG187tpsWPm4ArPUcPQC0pwHvtnuA40VJw0x4saLM/Pz8chNc8s/diJVg9g8LHq6jZpyGCm8joBXa23KNU5QUCOAV1K05PJYbRIEqusENULNzqX9fDm0qwq0QaBWGIExyZ50Lb+G8SUha5/lDdVI0nYatt5yLPOl1jHouxq9AI9nUWZEihDL9a+J3QIDAQAB",
   "background": {
     "service_worker": "background.js",
@@ -11,7 +12,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "抓取到 FalconMM Inbox",
+    "default_title": "__MSG_extActionTitle__",
     "default_icon": {
       "16": "icons/toolbar-16.png",
       "32": "icons/toolbar-32.png",

@@ -10,10 +10,15 @@ import {
   MAX_DOWNLOAD_BYTES,
   SITES,
   isMediaDownload,
+  siteLabel,
   siteOfDownload,
   siteOfUrl,
   shouldImportDownload
 } from './lib/sites.mjs'
+import { t, setLanguage, resolveLanguage } from './lib/i18n.mjs'
+
+// 界面语言跟浏览器走：必须早于任何可能产生文案的代码（右键菜单标题、错误文案、入库记录）
+setLanguage(resolveLanguage(chrome.i18n.getUILanguage()))
 
 const HOST = 'com.falconmm.inbox'
 const CHUNK = 512 * 1024
@@ -206,9 +211,9 @@ function kindOfMime(mime) {
 
 async function fetchBytes(url) {
   const res = await fetch(url, { credentials: 'omit', cache: 'force-cache' })
-  if (!res.ok) throw new Error(`下载失败 HTTP ${res.status}`)
+  if (!res.ok) throw new Error(t('bg.fetch.failed', { status: res.status }))
   const blob = await res.blob()
-  if (blob.size > MAX_ITEM) throw new Error(`单件超过 200 MB 上限（${Math.round(blob.size / 1024 / 1024)} MB）`)
+  if (blob.size > MAX_ITEM) throw new Error(t('bg.fetch.tooLarge', { size: Math.round(blob.size / 1024 / 1024) }))
   const mime = blob.type || res.headers.get('content-type') || 'application/octet-stream'
   const buffer = await blob.arrayBuffer()
   return { buffer, mime, size: buffer.byteLength }
@@ -235,7 +240,7 @@ function createNativeSession() {
   })
   port.onDisconnect.addListener(() => {
     dead = true
-    deadError = chrome.runtime.lastError?.message || '本地应用未运行'
+    deadError = chrome.runtime.lastError?.message || t('bg.native.hostNotRunning')
     while (waiters.length > 0) {
       const w = waiters.shift()
       clearTimeout(w.timer)
@@ -251,7 +256,7 @@ function createNativeSession() {
     waitFor(types, timeoutMs = 180000) {
       if (dead) return Promise.reject(Object.assign(new Error(deadError), { code: 50304 }))
       return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(Object.assign(new Error('本地应用响应超时'), { code: 50304 })), timeoutMs)
+        const timer = setTimeout(() => reject(Object.assign(new Error(t('bg.native.hostResponseTimeout')), { code: 50304 })), timeoutMs)
         waiters.push({ types, resolve, reject, timer })
       })
     },
@@ -301,7 +306,7 @@ async function handshake(session, pairCode, timeoutMs = 15000) {
     registerSites(session)
     return res.data.token
   }
-  if (!state.token) throw Object.assign(new Error('尚未配对'), { code: 40304 })
+  if (!state.token) throw Object.assign(new Error(t('bg.native.notPaired')), { code: 40304 })
   session.send({
     type: 'hello',
     protocolVersion: 1,
@@ -517,11 +522,11 @@ async function sendImportPath(session, entry) {
   })
   const res = await session.waitFor(['import_path_result', 'error'], 180000)
   if (res.type === 'error') {
-    throw Object.assign(new Error(res.message || '下载文件导入失败'), { code: res.code || 50304 })
+    throw Object.assign(new Error(res.message || t('bg.import.failed')), { code: res.code || 50304 })
   }
   if (!res.data?.ok) {
     const code = Number(res.code || 0)
-    throw Object.assign(new Error(res.data?.reason || res.message || '下载文件导入失败'), {
+    throw Object.assign(new Error(res.data?.reason || res.message || t('bg.import.failed')), {
       code,
       retryable: code === 50304 || code === 40304
     })
@@ -548,10 +553,10 @@ async function sendDownloadUrl(payload) {
     // 4K 长视频要下载两条轨再合并，10 分钟不够；放宽到 30 分钟等桌面端完成
     const res = await session.waitFor(['download_url_result', 'error'], 30 * 60 * 1000)
     if (res.type === 'error') {
-      throw Object.assign(new Error(res.message || 'Falcon 下载失败'), { code: res.code || 50304 })
+      throw Object.assign(new Error(res.message || t('bg.download.failed')), { code: res.code || 50304 })
     }
     if (!res.data?.ok) {
-      throw Object.assign(new Error(res.data?.message || res.message || 'Falcon 下载失败'), {
+      throw Object.assign(new Error(res.data?.message || res.message || t('bg.download.failed')), {
         code: Number(res.code || 0)
       })
     }
@@ -676,17 +681,17 @@ async function syncPathQueue(sendProgress) {
 function downloadSkipReason(reason) {
   return (
     {
-      auto_import_off: '自动入库已关闭',
-      not_complete: '下载尚未完成',
-      not_found: '找不到该下载',
-      no_file: '下载文件路径为空',
-      file_missing: '下载文件已被移动或删除',
-      dangerous: '浏览器将该文件标记为不安全，已跳过',
-      not_media: '只自动导入图片/视频；压缩包、分片清单与其它格式请手动处理',
-      too_large: '文件超过 4 GB 上限',
-      site_unrecognized: '无法识别来源站点',
-      duplicate: '内容已在库中'
-    }[reason] || '该下载不满足自动入库条件'
+      auto_import_off: t('bg.skipReason.autoImportOff'),
+      not_complete: t('bg.skipReason.notComplete'),
+      not_found: t('bg.skipReason.notFound'),
+      no_file: t('bg.skipReason.noFile'),
+      file_missing: t('bg.skipReason.fileMissing'),
+      dangerous: t('bg.skipReason.dangerous'),
+      not_media: t('bg.skipReason.notMedia'),
+      too_large: t('bg.skipReason.tooLarge'),
+      site_unrecognized: t('bg.skipReason.siteUnrecognized'),
+      duplicate: t('bg.skipReason.duplicate')
+    }[reason] || t('bg.skipReason.default')
   )
 }
 
@@ -858,7 +863,7 @@ async function captureItems(items, captureMethod, sendProgress, context = {}) {
     return {
       ok: false,
       code: 40306,
-      message: `未授予 ${perm.origin} 的访问权限，本次抓取未入库。请打开插件弹窗重新点击「抓取到 Falcon」完成授权后重试。`,
+      message: t('bg.capture.permissionDenied', { origin: perm.origin }),
       results: []
     }
   }
@@ -890,7 +895,7 @@ async function captureItems(items, captureMethod, sendProgress, context = {}) {
     await handshake(session)
   } catch (e) {
     // 应用未运行：普通媒体逐项暂存（字节进 IndexedDB）；站点视频没法离线下载，如实报错
-    const routedReason = 'Falcon 未运行：站点视频由 Falcon 直接下载入库，请先启动桌面端再抓取'
+    const routedReason = t('bg.native.siteVideoNotRunning')
     for (const item of routed) {
       results.push({ url: item.url, ok: false, reason: routedReason })
     }
@@ -910,7 +915,7 @@ async function captureItems(items, captureMethod, sendProgress, context = {}) {
     if (e.code === 40304) {
       state.token = null
       await storageSet({ token: null })
-      return { ok: false, code: 40304, message: '需要重新配对', results }
+      return { ok: false, code: 40304, message: t('bg.native.repairRequired'), results }
     }
     return {
       ok: true,
@@ -918,7 +923,7 @@ async function captureItems(items, captureMethod, sendProgress, context = {}) {
       queued,
       added: 0,
       duplicates: 0,
-      message: '本地素材库未运行',
+      message: t('bg.native.libraryNotRunning'),
       results
     }
   }
@@ -975,7 +980,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if (message.type === 'verify') {
       await loadQueue()
-      if (!state.token) return { ok: false, code: 40304, message: '尚未配对' }
+      if (!state.token) return { ok: false, code: 40304, message: t('bg.native.notPaired') }
       let session
       try {
         session = createNativeSession()
@@ -1036,7 +1041,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         queueCount: state.pathQueue.length,
         byteQueueCount: state.queue.length,
         recent: state.recentImports.slice(0, 10),
-        sites: Object.fromEntries(Object.entries(SITES).map(([key, site]) => [key, { label: site.label, script: site.script, installUrl: site.installUrl }]))
+        sites: Object.fromEntries(Object.entries(SITES).map(([key, site]) => [key, { label: siteLabel(key), script: site.script, installUrl: site.installUrl }]))
       }
     }
     if (message.type === 'set_auto_import') {
@@ -1057,7 +1062,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         item = null
       }
       if (!item || item.state !== 'complete' || !item.filename) {
-        return { ok: false, message: '下载尚未完成或文件已不存在，请在浏览器下载列表中确认后重试' }
+        return { ok: false, message: t('bg.import.notReady') }
       }
       const hintSite = SITES[message.siteHint] ? message.siteHint : null
       const pageUrl = String(message.pageUrl || '')
@@ -1065,7 +1070,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const detected = siteOfDownload(item)
       const site = hintSite && pageSite === hintSite ? hintSite : detected || hintSite
       if (!site) {
-        return { ok: false, message: '无法识别来源站点：请先在受支持的站点页面打开插件，再点导入' }
+        return { ok: false, message: t('bg.import.siteUnrecognized') }
       }
       const verdict = shouldImportDownload(item, { autoImport: true, maxBytes: MAX_DOWNLOAD_BYTES })
       if (!verdict.ok && verdict.reason !== 'site_unrecognized') {
@@ -1076,9 +1081,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if (message.type === 'native_download') {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-      if (!tab?.id) return { ok: false, message: '没有活动标签页' }
+      if (!tab?.id) return { ok: false, message: t('bg.native.noActiveTab') }
       const site = siteOfUrl(message.pageUrl || tab.url)
-      if (!site) return { ok: false, message: '当前页面不是受支持的站点页面' }
+      if (!site) return { ok: false, message: t('bg.native.unsupportedSite') }
       const attempt = async () => {
         await chrome.scripting.executeScript({
           target: { tabId: tab.id },
@@ -1091,10 +1096,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           func: () => window.__falconResolveNative?.()
         })
         const resolved = results?.[0]?.result
-        if (!resolved) return { ok: false, message: '页面脚本没有返回结果' }
-        if (!resolved.ok) return resolved
+        if (!resolved) return { ok: false, message: t('bg.native.noResult') }
+        if (!resolved.ok) {
+          // 页面脚本不带词典：带 key 的失败在这里翻成用户语言，没有 key 的沿用脚本给的 message
+          if (resolved.key) return { ...resolved, message: t(resolved.key, resolved.vars) }
+          return resolved
+        }
         if (!Array.isArray(resolved.media) || resolved.media.length === 0) {
-          return { ok: false, message: '页面没有解析出可下载的媒体地址' }
+          return { ok: false, message: t('bg.native.noMedia') }
         }
         const downloaded = await sendDownloadUrl({
           requestId: ulid(),
@@ -1116,7 +1125,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         await new Promise((r) => setTimeout(r, 600))
         const retried = await attempt()
         if (retried.ok || retried.retryable === false) return retried
-        return { ok: false, message: `${retried.message}（已自动重试仍失败；请刷新页面后再点下载）` }
+        return { ok: false, message: t('bg.native.retryFailed', { message: retried.message }) }
       } catch (e) {
         if (e.code === 50304 || e.code === 40304) {
           return {
@@ -1124,8 +1133,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             code: e.code,
             message:
               e.code === 40304
-                ? 'Falcon 尚未配对：请打开桌面端生成配对码，配对后再下载'
-                : 'Falcon 未运行：请先启动桌面端，下载会由 Falcon 执行'
+                ? t('bg.native.downloadNotPaired')
+                : t('bg.native.downloadNotRunning')
           }
         }
         return { ok: false, message: String(e?.message || e) }
@@ -1161,7 +1170,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       await saveQueue()
       return { ok: true }
     }
-    return { ok: false, message: '未知消息' }
+    return { ok: false, message: t('bg.unknownMessage') }
   }
   run().then(sendResponse).catch((e) => sendResponse({ ok: false, message: String(e?.message || e) }))
   return true
@@ -1170,7 +1179,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: 'falcon-save',
-    title: '保存到素材库 Inbox',
+    title: t('bg.contextMenu.saveToInbox'),
     contexts: ['image', 'video']
   })
   chrome.alarms.create('falcon-sync', { periodInMinutes: 1 })
@@ -1180,6 +1189,10 @@ chrome.runtime.onInstalled.addListener(() => {
   })
   void loadQueue().then(() => updateBadge())
 })
+
+// 菜单项在浏览器重启后保留，标题不会跟着界面语言变：service worker 每次启动都按当前语言刷新。
+// 首次安装时菜单还不存在，update 会 reject，忽略即可（onInstalled 里会 create）。
+chrome.contextMenus.update('falcon-save', { title: t('bg.contextMenu.saveToInbox') }).catch(() => undefined)
 
 chrome.runtime.onStartup.addListener(() => {
   void loadQueue()

@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "FalconMM Inbox"
+  },
+  "extDesc": {
+    "message": "把目前頁面的圖片/影片，以及嗶哩嗶哩、抖音、小紅書、YouTube 等站點的影片，送進本機 FalconMM 素材庫的收件匣；只走本機通道，不上傳任何遠端。"
+  },
+  "extActionTitle": {
+    "message": "擷取到 FalconMM Inbox"
+  }
+}

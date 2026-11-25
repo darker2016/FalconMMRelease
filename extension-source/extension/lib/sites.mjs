@@ -1,6 +1,8 @@
 // 支持的视频站点与下载判定（MV3 service worker 与 popup 共用）。
 // 只做纯函数：不访问 chrome.*，方便单元测试。
 
+import { t } from './i18n.mjs'
+
 export const SITES = {
   bilibili: {
     key: 'bilibili',
@@ -128,6 +130,20 @@ export const DRM_SITES = {
 
 export const DRM_SITE_KEYS = Object.keys(DRM_SITES)
 
+// 站点名 → 词典 key（显式映射，不拼接）。SITES / DRM_SITES 的 label 字段保留 zh-CN 原文：
+// register_sites 把它上报给桌面端当兜底标识，不随界面语言变。
+const SITE_LABEL_KEYS = {
+  bilibili: 'site.bilibili',
+  douyin: 'site.douyin',
+  xiaohongshu: 'site.xiaohongshu',
+  youtube: 'site.youtube',
+  tiktok: 'site.tiktok',
+  twitter: 'site.twitter',
+  instagram: 'site.instagram',
+  vimeo: 'site.vimeo'
+}
+const DRM_LABEL_KEYS = { iqiyi: 'drm.iqiyi', youku: 'drm.youku', tencent: 'drm.tencent', mango: 'drm.mango' }
+
 export function drmSiteOfUrl(value) {
   const host = hostOfUrl(value)
   if (!host) return null
@@ -138,8 +154,9 @@ export function drmSiteOfUrl(value) {
   return null
 }
 
+/** 展示用 DRM 站点名（随界面语言）；不在映射里的 key 返回空串。 */
 export function drmSiteLabel(key) {
-  return DRM_SITES[key]?.label || ''
+  return DRM_LABEL_KEYS[key] ? t(DRM_LABEL_KEYS[key]) : ''
 }
 
 export const MEDIA_EXTENSIONS = new Set([
@@ -195,8 +212,9 @@ export function siteOfDownload(item) {
   return null
 }
 
+/** 展示用站点名（随界面语言）；开发者自建站点不在映射里，回退 SITES 的 label。 */
 export function siteLabel(site) {
-  return SITES[site]?.label || ''
+  return SITE_LABEL_KEYS[site] ? t(SITE_LABEL_KEYS[site]) : SITES[site]?.label || ''
 }
 
 export function isMediaDownload(item) {

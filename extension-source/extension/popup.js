@@ -1,5 +1,11 @@
 // P8 插件弹窗：主态 / 批量 / 暂存与同步结果 / 不可抓 / 未授权 / 配对 / 视频下载器
 import { SITES, drmSiteLabel, drmSiteOfUrl, hostOfUrl, siteLabel, siteOfUrl } from './lib/sites.mjs'
+import { t, setLanguage, resolveLanguage, isRtl } from './lib/i18n.mjs'
+
+const lang = setLanguage(resolveLanguage(chrome.i18n.getUILanguage()))
+document.documentElement.lang = lang
+document.documentElement.dir = isRtl() ? 'rtl' : 'ltr'
+document.title = t('popup.html.title')
 
 const els = {
   content: document.getElementById('content'),
@@ -13,6 +19,14 @@ const els = {
   gear: document.getElementById('gear'),
   close: document.getElementById('close')
 }
+
+// 弹窗静态 title / aria-label 由 t() 覆盖，最终文案不依赖 popup.html 里的初值
+els.downloader.title = t('popup.html.downloader')
+els.downloader.setAttribute('aria-label', t('popup.html.downloader'))
+els.gear.title = t('popup.html.gearTitle')
+els.gear.setAttribute('aria-label', t('popup.html.gearLabel'))
+els.close.title = t('popup.html.close')
+els.close.setAttribute('aria-label', t('popup.html.close'))
 
 const state = {
   status: null,
@@ -62,8 +76,10 @@ function render() {
   const s = state.status
   const paired = Boolean(s?.tokenSet)
   els.connDot.className = `dot ${paired ? 'ok' : 'bad'}`
-  els.connText.textContent = paired ? '已配对' : '未配对'
-  els.origin.textContent = state.pageInfo.pageUrl ? new URL(state.pageInfo.pageUrl).host : '当前页面'
+  els.connText.textContent = paired ? t('popup.conn.paired') : t('popup.conn.unpaired')
+  els.origin.textContent = state.pageInfo.pageUrl
+    ? new URL(state.pageInfo.pageUrl).host
+    : t('popup.counts.currentPage')
   const images = state.media.filter((m) => m.kind === 'image').length
   const videos = state.media.filter((m) => m.kind === 'video').length
   const currentSite = siteOfUrl(state.pageInfo.pageUrl || '')
@@ -71,18 +87,22 @@ function render() {
   els.counts.textContent =
     state.mode === 'downloader'
       ? currentSite
-        ? `当前页面：${SITES[currentSite].label}`
-        : `支持 ${Object.keys(SITES).length} 个站点直接下载`
+        ? t('popup.counts.site', { site: siteLabel(currentSite) })
+        : t('popup.counts.supportedSites', { count: Object.keys(SITES).length })
       : state.media.length
-        ? `本页 ${images} 张图片 · ${videos} 个视频${drmSite ? ` · ${drmSiteLabel(drmSite)}（DRM）` : ''}`
+        ? t('popup.counts.page', { images, videos }) +
+          (drmSite ? t('popup.counts.pageDrm', { site: drmSiteLabel(drmSite) }) : '')
         : state.mode === 'loading'
-          ? '正在读取当前页…'
-          : '本页没有可抓取的图片或视频。换个标签页试试。'
+          ? t('popup.counts.loading')
+          : t('popup.counts.empty')
 
   const q = s?.queue
   if (q && q.count > 0) {
     els.queueWarn.hidden = false
-    els.queueWarn.textContent = `已暂存待同步 ${q.count} 项（${Math.round((q.totalBytes || 0) / 1024 / 1024 * 10) / 10} MB，上限 50 项 / 2 GB / 7 天）。暂存项存于浏览器本地，清理浏览器数据会丢失，建议尽快启动本地应用完成同步。`
+    els.queueWarn.textContent = t('popup.queueWarn.pending', {
+      count: q.count,
+      size: Math.round((q.totalBytes || 0) / 1024 / 1024 * 10) / 10
+    })
   } else {
     els.queueWarn.hidden = true
   }
@@ -91,7 +111,7 @@ function render() {
   els.actions.replaceChildren()
 
   if (state.mode === 'loading') {
-    els.content.appendChild(h('div', { class: 'center' }, '正在读取当前页…'))
+    els.content.appendChild(h('div', { class: 'center' }, t('popup.counts.loading')))
     return
   }
   if (state.mode === 'pairing') {
@@ -103,31 +123,29 @@ function render() {
       h(
         'div',
         { class: 'list' },
-        h('div', { class: 'rowitem' }, '在桌面应用打开：设置 → 浏览器插件'),
-        h('div', { class: 'rowitem' }, '可以生成配对码、查看暂存队列、撤销站点授权、断开所有插件。'),
-        h('div', { class: 'rowitem' }, '插件只做采集；整理、打标签、归档都在桌面端完成。'),
-        h(
-          'p',
-          { class: 'hintline' },
-          '本扩展申请 8 项权限：unlimitedStorage 仅解除暂存容量限制；downloads 仅在「自动收进 Inbox」开启时读取已完成下载的文件名/来源，用于导入，不读取文件内容。'
-        )
+        h('div', { class: 'rowitem' }, t('popup.info.openDesktopSettings')),
+        h('div', { class: 'rowitem' }, t('popup.info.capabilities')),
+        h('div', { class: 'rowitem' }, t('popup.info.captureOnly')),
+        h('p', { class: 'hintline' }, t('popup.info.permissions'))
       )
     )
     els.actions.appendChild(
       h('button', {
         class: 'btn secondary',
-        text: '重新配对（清除本机配对信息）',
+        text: t('popup.info.repair'),
         onclick: async () => {
           try {
             await send({ type: 'unpair' })
           } catch {}
           state.status = { ...(state.status || {}), tokenSet: false }
-          state.pairingError = '已清除本机配对信息，请输入新的配对码'
+          state.pairingError = t('popup.pairing.cleared')
           setMode('pairing')
         }
       })
     )
-    els.actions.appendChild(h('button', { class: 'btn secondary', text: '返回', onclick: () => setMode('main') }))
+    els.actions.appendChild(
+      h('button', { class: 'btn secondary', text: t('popup.info.back'), onclick: () => setMode('main') })
+    )
     return
   }
   if (state.mode === 'downloader') {
@@ -140,8 +158,14 @@ function render() {
       h(
         'div',
         { class: 'center' },
-        h('div', { class: 'mono', text: p.step === 'capture' ? `写入中 ${p.index} / ${p.total}` : '传输中…' }),
-        h('div', { text: '正在送入本地 Inbox，可以等它完成' })
+        h('div', {
+          class: 'mono',
+          text:
+            p.step === 'capture'
+              ? t('popup.progress.capture', { index: p.index, total: p.total })
+              : t('popup.progress.transferring')
+        }),
+        h('div', { text: t('popup.progress.hint') })
       )
     )
     return
@@ -159,18 +183,18 @@ function render() {
       h(
         'div',
         { class: 'list' },
-        h('div', { class: 'rowitem bad' }, '当前标签页未授权，读不到本页素材'),
-        h('div', { class: 'rowitem' }, '恢复路径：扩展设置 → 站点访问 → 允许本页，然后重新尝试。'),
-        h('div', { class: 'rowitem' }, state.error || '本次未入库，也没有保存链接。')
+        h('div', { class: 'rowitem bad' }, t('popup.permission.denied')),
+        h('div', { class: 'rowitem' }, t('popup.permission.howToRestore')),
+        h('div', { class: 'rowitem' }, state.error || t('popup.permission.notSaved'))
       )
     )
     els.actions.appendChild(
-      h('button', { class: 'btn primary', text: '重新尝试抓取', onclick: () => doCapture('toolbar') })
+      h('button', { class: 'btn primary', text: t('popup.permission.retry'), onclick: () => doCapture('toolbar') })
     )
     els.actions.appendChild(
       h('button', {
         class: 'btn secondary',
-        text: '打开扩展管理页',
+        text: t('popup.permission.openExtensions'),
         onclick: () => chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` })
       })
     )
@@ -186,23 +210,23 @@ function render() {
         h(
           'div',
           { class: 'center' },
-          h('div', { class: 'bad', text: `${drmSiteLabel(drmSite)} 的视频受 DRM 保护，插件不抓取也不解密` }),
-          h('div', { text: '这些站点把音视频加密后交给播放器解密，任何「下载」都需要破解 DRM，插件不会做这件事——脚本同样不行。' }),
-          h('div', { text: '需要留档请在桌面端录屏：⌘/Ctrl+Shift+K 框选画面（可录系统声音），录完直接进 Inbox。' }),
-          h('div', { text: '本页图片（封面、剧照、海报）不受影响，仍可正常勾选抓取。' })
+          h('div', { class: 'bad', text: t('popup.notCapturable.drmTitle', { site: drmSiteLabel(drmSite) }) }),
+          h('div', { text: t('popup.notCapturable.drmBody1') }),
+          h('div', { text: t('popup.notCapturable.drmBody2') }),
+          h('div', { text: t('popup.notCapturable.drmBody3') })
         )
       )
       els.actions.appendChild(
         h('button', {
           class: 'btn primary',
-          text: '返回（可抓本页图片）',
+          text: t('popup.notCapturable.backToImages'),
           onclick: () => setMode('main')
         })
       )
       els.actions.appendChild(
         h('button', {
           class: 'btn secondary',
-          text: '打开视频下载器（多站点直接下载）',
+          text: t('popup.notCapturable.openDownloaderMulti'),
           onclick: () => openDownloader()
         })
       )
@@ -214,18 +238,20 @@ function render() {
         { class: 'center' },
         h(
           'div',
-          { class: canNative ? '' : 'bad', text: canNative ? '这个视频是流媒体播放，但可以直接下载' : '该视频是流媒体分片或受 DRM 保护，插件无法直接抓取' }
+          {
+            class: canNative ? '' : 'bad',
+            text: canNative
+              ? t('popup.notCapturable.streamTitle')
+              : t('popup.notCapturable.blockedTitle')
+          }
         ),
         canNative
-          ? h(
-              'div',
-              { text: `插件已接入 ${SITES[currentSite].label} 原生下载：读取当前页面的播放数据，交给 Falcon 直接下载并加入 Inbox。` }
-            )
-          : h('div', { text: '页面播放器只暴露 m3u8 清单或 blob 流，没有可下载的完整文件。' }),
+          ? h('div', { text: t('popup.notCapturable.nativeBody', { site: siteLabel(currentSite) }) })
+          : h('div', { text: t('popup.notCapturable.blockedBody') }),
         canNative
-          ? h('div', { text: '如果原生下载失败（页面数据缺失 / 站点限制），再装对应脚本兜底；录屏是最后的兜底。' })
-          : h('div', { text: '可以安装 Tampermonkey 与对应脚本，或使用桌面端录屏。' }),
-        n.busy ? h('div', { class: 'mono', text: '正在读取页面数据并下载…' }) : null,
+          ? h('div', { text: t('popup.notCapturable.nativeHint') })
+          : h('div', { text: t('popup.notCapturable.blockedHint') }),
+        n.busy ? h('div', { class: 'mono', text: t('popup.notCapturable.nativeBusy') }) : null,
         n.result?.ok
           ? h('div', { class: 'ok', text: nativeResultText(n.result) })
           : null,
@@ -235,7 +261,11 @@ function render() {
     els.actions.appendChild(
       h('button', {
         class: 'btn primary',
-        text: n.busy ? '下载中…' : canNative ? '直接下载当前视频' : '打开视频下载器',
+        text: n.busy
+          ? t('popup.notCapturable.downloading')
+          : canNative
+            ? t('popup.notCapturable.downloadVideo')
+            : t('popup.notCapturable.openDownloader'),
         disabled: Boolean(n.busy),
         onclick: () => (canNative ? void nativeDownload() : openDownloader())
       })
@@ -243,7 +273,7 @@ function render() {
     els.actions.appendChild(
       h('button', {
         class: 'btn secondary',
-        text: canNative ? '安装脚本兜底' : '返回',
+        text: canNative ? t('popup.notCapturable.installScript') : t('popup.info.back'),
         onclick: () => (canNative ? openDownloader() : setMode('main'))
       })
     )
@@ -254,15 +284,15 @@ function render() {
       h(
         'div',
         { class: 'list' },
-        h('div', { class: 'rowitem bad' }, '本地组件未安装 / 通道不可用，本次抓取未入库'),
-        h('div', { class: 'rowitem' }, '不建素材记录，也不保存链接。安装本地组件后即可恢复 L1 原生抓取。'),
+        h('div', { class: 'rowitem bad' }, t('popup.l3.title')),
+        h('div', { class: 'rowitem' }, t('popup.l3.body')),
         h('div', { class: 'rowitem' }, state.error || '')
       )
     )
     els.actions.appendChild(
       h('button', {
         class: 'btn secondary',
-        text: '复制页面链接（仅剪贴板）',
+        text: t('popup.l3.copyLink'),
         onclick: async () => {
           await navigator.clipboard.writeText(state.pageInfo.pageUrl || '')
         }
@@ -290,7 +320,7 @@ async function nativeDownload() {
     ok: false,
     message: String(e?.message || e)
   }))
-  state.native = { busy: false, result: res || { ok: false, message: '下载器没有返回结果' } }
+  state.native = { busy: false, result: res || { ok: false, message: t('popup.downloader.noResult') } }
   await refreshDownloader()
   render()
 }
@@ -309,7 +339,15 @@ async function refreshDownloader() {
 }
 
 function importStatusLabel(status) {
-  return { ok: '已入库', duplicate: '已在库中', queued: '待同步', skipped: '已跳过', failed: '失败' }[status] || status
+  return (
+    {
+      ok: t('popup.importStatus.ok'),
+      duplicate: t('popup.importStatus.duplicate'),
+      queued: t('popup.importStatus.queued'),
+      skipped: t('popup.importStatus.skipped'),
+      failed: t('popup.importStatus.failed')
+    }[status] || status
+  )
 }
 
 function nativeResultText(result) {
@@ -317,9 +355,9 @@ function nativeResultText(result) {
   const failed = result?.failed || []
   const duplicates = files.filter((file) => file.duplicate).length
   const added = Math.max(0, files.length - duplicates)
-  const duplicateText = duplicates > 0 ? `（${duplicates} 项已在库中）` : ''
-  const failedText = failed.length > 0 ? `；${failed.length} 项失败` : ''
-  return `Falcon 已加入 ${added} 项${duplicateText}${failedText}`
+  const duplicateText = duplicates > 0 ? t('popup.nativeResult.duplicates', { count: duplicates }) : ''
+  const failedText = failed.length > 0 ? t('popup.nativeResult.failed', { count: failed.length }) : ''
+  return t('popup.nativeResult.summary', { count: added, duplicates: duplicateText, failed: failedText })
 }
 
 function renderDownloader() {
@@ -332,16 +370,12 @@ function renderDownloader() {
     h(
       'div',
       { class: 'rowitem' },
-      current ? `当前页面：${SITES[current].label}` : '当前页面不是受支持的站点；仍可先安装脚本'
+      current
+        ? t('popup.counts.site', { site: siteLabel(current) })
+        : t('popup.downloader.unsupportedPage')
     )
   )
-  rows.push(
-    h(
-      'div',
-      { class: 'rowitem' },
-      '优先用原生下载：插件解析地址，Falcon 直接下载并加入 Inbox。高画质/批量再装脚本兜底。'
-    )
-  )
+  rows.push(h('div', { class: 'rowitem' }, t('popup.downloader.intro')))
 
   if (current) {
     const n = state.native || {}
@@ -349,22 +383,38 @@ function renderDownloader() {
       h(
         'div',
         { class: 'dlrow on' },
-        h('span', { class: 'dlname' }, '当前页面直接下载'),
+        h('span', { class: 'dlname' }, t('popup.downloader.currentPageDirect')),
         h(
           'span',
           { class: 'dlmeta' },
-          n.busy ? '正在读取并下载…' : n.result?.ok ? nativeResultText(n.result) : '由 Falcon 下载'
+          n.busy
+            ? t('popup.downloader.fetching')
+            : n.result?.ok
+              ? nativeResultText(n.result)
+              : t('popup.downloader.fetchedByFalcon')
         ),
         h('button', {
           class: 'btn primary',
-          text: n.busy ? '下载中…' : current === 'xiaohongshu' ? '下载当前笔记' : current === 'douyin' ? '下载当前作品' : '下载当前视频',
+          text: n.busy
+            ? t('popup.notCapturable.downloading')
+            : current === 'xiaohongshu'
+              ? t('popup.downloader.downloadNote')
+              : current === 'douyin'
+                ? t('popup.downloader.downloadPost')
+                : t('popup.downloader.downloadVideo'),
           disabled: Boolean(n.busy),
           onclick: () => void nativeDownload()
         })
       )
     )
     if (n.result && !n.result.ok) {
-      rows.push(h('div', { class: 'rowitem bad' }, `${n.result.message}（可改用下方脚本方案）`))
+      rows.push(
+        h(
+          'div',
+          { class: 'rowitem bad' },
+          t('popup.downloader.errorWithScriptFallback', { message: n.result.message })
+        )
+      )
     } else if (n.result?.ok) {
       rows.push(
         h(
@@ -376,23 +426,17 @@ function renderDownloader() {
     }
   }
 
-  rows.push(
-    h(
-      'div',
-      { class: 'rowitem' },
-      '脚本兜底（高画质 DASH / 批量 / 合集）：脚本负责解析和下载，FalconMM 只读取 Chrome 已完成的下载路径并收进 Inbox。'
-    )
-  )
+  rows.push(h('div', { class: 'rowitem' }, t('popup.downloader.scriptFallbackIntro')))
 
   rows.push(
     h(
       'div',
       { class: 'dlrow' },
       h('span', { class: 'dlname' }, 'Tampermonkey'),
-      h('span', { class: 'dlmeta' }, '脚本管理器'),
+      h('span', { class: 'dlmeta' }, t('popup.downloader.scriptManager')),
       h('button', {
         class: 'btn secondary',
-        text: '打开',
+        text: t('popup.downloader.open'),
         onclick: () => chrome.tabs.create({ url: SITES.bilibili.tampermonkeyUrl })
       })
     )
@@ -405,24 +449,22 @@ function renderDownloader() {
       h(
         'div',
         { class: `dlrow ${key === current ? 'on' : ''}` },
-        h('span', { class: 'dlname' }, `${site.label} · ${site.script}`),
-        h('span', { class: 'dlmeta' }, key === current ? '当前站点' : ''),
+        h(
+          'span',
+          { class: 'dlname' },
+          t('popup.downloader.scriptRow', { site: siteLabel(key), script: site.script })
+        ),
+        h('span', { class: 'dlmeta' }, key === current ? t('popup.downloader.currentSite') : ''),
         h('button', {
           class: 'btn secondary',
-          text: '安装页',
+          text: t('popup.downloader.installPage'),
           onclick: () => chrome.tabs.create({ url: site.installUrl })
         })
       )
     )
   }
 
-  rows.push(
-    h(
-      'div',
-      { class: 'rowitem' },
-      'YouTube / TikTok / X (Twitter) / Instagram / Vimeo：用上方「当前页面直接下载」；想扩展站点见发布库的插件源码与开发者文档。'
-    )
-  )
+  rows.push(h('div', { class: 'rowitem' }, t('popup.downloader.internationalSites')))
 
   rows.push(
     h(
@@ -437,7 +479,7 @@ function renderDownloader() {
           render()
         }
       }),
-      h('span', { text: '下载完成后自动收进 Inbox' })
+      h('span', { text: t('popup.downloader.autoImport') })
     )
   )
 
@@ -446,11 +488,21 @@ function renderDownloader() {
       h(
         'div',
         { class: 'dlrow' },
-        h('span', { class: 'dlname' }, `待同步：${d.queueCount || 0} 个下载`),
-        h('span', { class: 'dlmeta' }, d.byteQueueCount ? `另有 ${d.byteQueueCount} 个抓取` : '应用启动后自动重试'),
+        h(
+          'span',
+          { class: 'dlname' },
+          t('popup.downloader.pendingDownloads', { count: d.queueCount || 0 })
+        ),
+        h(
+          'span',
+          { class: 'dlmeta' },
+          d.byteQueueCount
+            ? t('popup.downloader.pendingCaptures', { count: d.byteQueueCount })
+            : t('popup.downloader.autoRetry')
+        ),
         h('button', {
           class: 'btn secondary',
-          text: '同步',
+          text: t('popup.downloader.sync'),
           onclick: () => void doSync()
         })
       )
@@ -459,28 +511,31 @@ function renderDownloader() {
 
   const recent = d.recent || []
   if (recent.length > 0) {
-    rows.push(h('div', { class: 'rowitem' }, '最近自动入库'))
+    rows.push(h('div', { class: 'rowitem' }, t('popup.downloader.recentImports')))
     for (const item of recent.slice(0, 4)) {
       rows.push(
         h(
           'div',
           { class: 'dlrow' },
-          h('span', { class: 'dlname' }, item.fileName || '下载文件'),
+          h('span', { class: 'dlname' }, item.fileName || t('popup.downloader.downloadFile')),
           h(
             'span',
             { class: `dlmeta ${item.status === 'failed' ? 'bad' : ''}` },
-            `${siteLabel(item.site) || '来源未识别'} · ${importStatusLabel(item.status)}`
+            t('popup.downloader.recentMeta', {
+              site: siteLabel(item.site) || t('popup.downloader.unknownSource'),
+              status: importStatusLabel(item.status)
+            })
           )
         )
       )
     }
   } else {
-    rows.push(h('p', { class: 'hintline' }, '还没有自动入库记录。安装脚本后下载一个视频试试。'))
+    rows.push(h('p', { class: 'hintline' }, t('popup.downloader.noRecentImports')))
   }
 
   const candidates = state.recentDownloads || []
   if (candidates.length > 0) {
-    rows.push(h('div', { class: 'rowitem' }, '浏览器最近下载（可手动导入）'))
+    rows.push(h('div', { class: 'rowitem' }, t('popup.downloader.recentDownloads')))
     for (const item of candidates.slice(0, 4)) {
       const targetSite = item.site || current
       const handled = item.imported || item.status === 'ok' || item.status === 'duplicate'
@@ -490,21 +545,30 @@ function renderDownloader() {
         h(
           'div',
           { class: 'dlrow' },
-          h('span', { class: 'dlname' }, item.fileName || '下载文件'),
+          h('span', { class: 'dlname' }, item.fileName || t('popup.downloader.downloadFile')),
           h(
             'span',
             { class: 'dlmeta' },
             handled
-              ? '已入库'
+              ? t('popup.importStatus.ok')
               : queued
-                ? '待同步'
+                ? t('popup.importStatus.queued')
                 : item.status === 'failed'
-                  ? '上次失败，可重试'
-                  : siteLabel(item.site) || (current ? `按 ${SITES[current].label} 导入` : '来源未识别')
+                  ? t('popup.downloader.lastFailed')
+                  : siteLabel(item.site) ||
+                    (current
+                      ? t('popup.downloader.importAs', { site: siteLabel(current) })
+                      : t('popup.downloader.unknownSource'))
           ),
           h('button', {
             class: 'btn secondary',
-            text: handled ? '已入库' : queued ? '待同步' : item.status === 'failed' ? '重试' : '导入',
+            text: handled
+              ? t('popup.importStatus.ok')
+              : queued
+                ? t('popup.importStatus.queued')
+                : item.status === 'failed'
+                  ? t('popup.downloader.retry')
+                  : t('popup.downloader.import'),
             disabled: !canImport,
             onclick: async (e) => {
               e.target.disabled = true
@@ -514,7 +578,7 @@ function renderDownloader() {
                 siteHint: targetSite,
                 pageUrl: state.pageInfo.pageUrl || ''
               })
-              if (!res?.ok && !res?.queued) state.error = res?.message || '导入失败'
+              if (!res?.ok && !res?.queued) state.error = res?.message || t('popup.downloader.importFailed')
               await refreshDownloader()
               render()
             }
@@ -528,12 +592,20 @@ function renderDownloader() {
   els.actions.appendChild(
     h('button', {
       class: 'btn primary',
-      text: current ? `打开 ${SITES[current].script} 安装页` : '打开 Tampermonkey',
+      text: current
+        ? t('popup.downloader.openScriptInstall', { script: SITES[current].script })
+        : t('popup.downloader.openTampermonkey'),
       onclick: () =>
         chrome.tabs.create({ url: current ? SITES[current].installUrl : SITES.bilibili.tampermonkeyUrl })
     })
   )
-  els.actions.appendChild(h('button', { class: 'btn secondary', text: '返回抓取', onclick: () => setMode('main') }))
+  els.actions.appendChild(
+    h('button', {
+      class: 'btn secondary',
+      text: t('popup.downloader.backToCapture'),
+      onclick: () => setMode('main')
+    })
+  )
 }
 
 function orderMedia(items) {
@@ -550,8 +622,8 @@ function renderMain() {
       h(
         'div',
         { class: 'center' },
-        h('div', { text: '本页没有可抓取的图片或视频。换个标签页试试。' }),
-        h('div', { text: '受保护视频（HLS / DRM / blob:）不会发起抓取。' })
+        h('div', { text: t('popup.counts.empty') }),
+        h('div', { text: t('popup.main.protectedNote') })
       )
     )
     return
@@ -561,8 +633,8 @@ function renderMain() {
       h(
         'div',
         { class: 'list', style: 'margin-bottom:8px' },
-        h('div', { class: 'rowitem bad' }, '本地素材库未运行：先打开 FalconMM 桌面端'),
-        h('div', { class: 'rowitem' }, '现在抓取会先存进浏览器本地暂存队列，打开应用后自动同步进 Inbox。')
+        h('div', { class: 'rowitem bad' }, t('popup.main.hostDownTitle')),
+        h('div', { class: 'rowitem' }, t('popup.main.hostDownBody'))
       )
     )
   }
@@ -573,9 +645,9 @@ function renderMain() {
       h(
         'div',
         { class: 'list', style: 'margin-bottom:8px' },
-        h('div', { class: 'rowitem' }, `${drmSiteLabel(drmSite)} 的视频受 DRM 加密保护，插件不抓取也不解密`),
-        h('div', { class: 'rowitem' }, '本页图片（封面 / 剧照 / 海报）仍可正常勾选抓取。'),
-        h('div', { class: 'rowitem' }, '需要留档视频请用桌面端录屏：⌘/Ctrl+Shift+K 框选画面，录完直接进 Inbox。')
+        h('div', { class: 'rowitem' }, t('popup.main.drmTitle', { site: drmSiteLabel(drmSite) })),
+        h('div', { class: 'rowitem' }, t('popup.main.drmImages')),
+        h('div', { class: 'rowitem' }, t('popup.main.drmRecord'))
       )
     )
   }
@@ -589,24 +661,24 @@ function renderMain() {
           'div',
           { class: currentSite ? 'rowitem' : 'rowitem bad' },
           drmSite
-            ? `本页 ${blockedVideos.length} 个视频是 DRM 加密流，插件不绕过`
+            ? t('popup.main.blockedDrmTitle', { count: blockedVideos.length })
             : currentSite
-              ? `本页 ${blockedVideos.length} 个视频是流媒体播放，可直接下载完整文件`
-              : `本页 ${blockedVideos.length} 个视频是流媒体或受保护内容，插件抓不了`
+              ? t('popup.main.blockedStreamTitle', { count: blockedVideos.length })
+              : t('popup.main.blockedOtherTitle', { count: blockedVideos.length })
         ),
         h(
           'div',
           { class: 'rowitem' },
           drmSite
-            ? `${drmSiteLabel(drmSite)} 把音视频加密后交给播放器解密，「下载」必须破解 DRM；脚本同样做不到。请用录屏留档。`
+            ? t('popup.main.drmBody', { site: drmSiteLabel(drmSite) })
             : currentSite
-              ? `点「直接下载当前视频」读取 ${SITES[currentSite].label} 页面数据，交给 Falcon 下载并加入 Inbox；失败再装脚本兜底。`
-              : '受支持站点的视频可点「直接下载」；其他站点请用桌面端录屏：⌘/Ctrl+Shift+K 框选画面。'
+              ? t('popup.main.streamBody', { site: siteLabel(currentSite) })
+              : t('popup.main.blockedOtherBody')
         ),
         currentSite
           ? h('button', {
               class: 'btn primary',
-              text: n.busy ? '下载中…' : '直接下载当前视频',
+              text: n.busy ? t('popup.notCapturable.downloading') : t('popup.notCapturable.downloadVideo'),
               disabled: Boolean(n.busy),
               onclick: () => void nativeDownload()
             })
@@ -632,10 +704,10 @@ function renderMain() {
     const placeholderText = blocked
       ? item.reason === 'drm_protected'
         ? 'DRM'
-        : '流媒体'
+        : t('popup.card.streaming')
       : isVideo
-        ? '视频'
-        : '图片'
+        ? t('popup.card.video')
+        : t('popup.card.image')
     const videoMeta = isVideo
       ? [formatDuration(item.durationMs), item.width && item.height ? `${item.width}×${item.height}` : '']
           .filter(Boolean)
@@ -690,7 +762,7 @@ function renderMain() {
             'div',
             { class: 'video-badge' },
             h('span', { class: 'play-tri' }),
-            h('span', { text: formatDuration(item.durationMs) || '视频' })
+            h('span', { text: formatDuration(item.durationMs) || t('popup.card.video') })
           )
         : null,
       h('div', {
@@ -707,25 +779,25 @@ function renderMain() {
               item.reason === 'drm_protected'
                 ? 'DRM'
                 : item.reason === 'hls_manifest' || item.reason === 'mse_blob'
-                  ? '流媒体'
-                  : '不可抓'
+                  ? t('popup.card.streaming')
+                  : t('popup.card.notCapturable')
           })
         : null,
       blocked
         ? h('button', {
             class: 'copy-link',
-            text: '复制链接',
-            title: '复制媒体地址（仅复制，不入库）',
+            text: t('popup.card.copyLink'),
+            title: t('popup.card.copyLinkTitle'),
             onclick: async (e) => {
               e.stopPropagation()
               try {
                 await navigator.clipboard.writeText(item.url)
-                e.target.textContent = '已复制'
+                e.target.textContent = t('popup.card.copied')
               } catch {
-                e.target.textContent = '复制失败'
+                e.target.textContent = t('popup.card.copyFailed')
               }
               setTimeout(() => {
-                if (e.target.isConnected) e.target.textContent = '复制链接'
+                if (e.target.isConnected) e.target.textContent = t('popup.card.copyLink')
               }, 1200)
             }
           })
@@ -735,12 +807,15 @@ function renderMain() {
   }
   els.content.appendChild(grid)
   els.content.appendChild(
-    h('p', { class: 'hintline' }, '勾选要入库的项目。判重只在本地落库时做一次；已存在的项会显示「已在库中」且不改动原有标签。')
+    h('p', { class: 'hintline' }, t('popup.main.hint'))
   )
 
   const selectedItems = items.filter((i) => state.selected.has(i.url))
   const targets = selectedItems.length > 0 ? selectedItems : items.filter((i) => i.capturable !== false).slice(0, 1)
-  const label = selectedItems.length > 1 ? `抓取 ${selectedItems.length} 项到 Falcon` : '抓取到 Falcon'
+  const label =
+    selectedItems.length > 1
+      ? t('popup.main.captureMany', { count: selectedItems.length })
+      : t('popup.main.capture')
   els.actions.appendChild(
     h(
       'button',
@@ -756,7 +831,10 @@ function renderMain() {
   els.actions.appendChild(
     h('button', {
       class: 'btn secondary',
-      text: selectedItems.length > 0 ? `清空选择（已选 ${selectedItems.length}）` : '全选可抓项',
+      text:
+        selectedItems.length > 0
+          ? t('popup.main.clearSelection', { count: selectedItems.length })
+          : t('popup.main.selectAll'),
       onclick: () => {
         if (state.selected.size > 0) state.selected.clear()
         else for (const i of items) if (i.capturable !== false) state.selected.add(i.url)
@@ -766,7 +844,11 @@ function renderMain() {
   )
   if (state.status?.queue?.count > 0) {
     els.actions.appendChild(
-      h('button', { class: 'btn ghost', text: `同步暂存队列（${state.status.queue.count} 项）`, onclick: () => void doSync() })
+      h('button', {
+        class: 'btn ghost',
+        text: t('popup.main.syncQueue', { count: state.status.queue.count }),
+        onclick: () => void doSync()
+      })
     )
   }
 }
@@ -781,16 +863,16 @@ function formatDuration(ms) {
 
 function reasonText(reason, drmSite) {
   if (drmSite) {
-    return `${drmSiteLabel(drmSite)} 的视频是 DRM 加密流：插件不做解密/绕过；请用桌面端 ⌘/Ctrl+Shift+K 录屏留档`
+    return t('popup.reason.drm', { site: drmSiteLabel(drmSite) })
   }
   return (
     {
-      mse_blob: '页面播放器不暴露完整文件；受支持站点可点「直接下载」，其他站点请用桌面端 ⌘/Ctrl+Shift+K 录屏',
-      hls_manifest: 'HLS / DASH 分片流；受支持站点可点「直接下载」，其他站点请用桌面端 ⌘/Ctrl+Shift+K 录屏',
-      drm_protected: '受 DRM 保护，无法抓取。需要的话请用桌面端 ⌘/Ctrl+Shift+K 录屏',
-      cross_origin_iframe: '跨源 iframe 内的媒体不可抓',
-      canvas_tainted: '跨域污染的画布不可导出'
-    }[reason] || '该媒体不可抓'
+      mse_blob: t('popup.reason.mseBlob'),
+      hls_manifest: t('popup.reason.hlsManifest'),
+      drm_protected: t('popup.reason.drmProtected'),
+      cross_origin_iframe: t('popup.reason.crossOriginIframe'),
+      canvas_tainted: t('popup.reason.canvasTainted')
+    }[reason] || t('popup.reason.unknown')
   )
 }
 
@@ -805,17 +887,17 @@ function renderResult() {
   const allFailed = added === 0 && dup === 0 && failedCount > 0
 
   let title
-  if (allFailed) title = `本次 ${failedCount} 项未入库`
-  else if (allDup) title = `本次 ${dup} 项均已在库中`
-  else if (added === 0 && dup === 0) title = '本次没有新增素材'
-  else title = `已加入 ${added} 项 · 已在库中 ${dup} 项`
+  if (allFailed) title = t('popup.result.allFailedTitle', { count: failedCount })
+  else if (allDup) title = t('popup.result.allDuplicateTitle', { count: dup })
+  else if (added === 0 && dup === 0) title = t('popup.result.emptyTitle')
+  else title = t('popup.result.summaryTitle', { added, duplicates: dup })
 
   const detail = allFailed
-    ? '逐项原因见下方。文件本身没有上传到任何远端，请按提示处理后重试。'
+    ? t('popup.result.allFailedDetail')
     : allDup
-      ? '未新增素材，原有标签与元数据未被改动。'
+      ? t('popup.result.allDuplicateDetail')
       : added > 0
-        ? '已进入与桌面抓取相同的 Inbox，按待处理状态排队。'
+        ? t('popup.result.addedDetail')
         : ''
 
   els.content.appendChild(
@@ -830,7 +912,11 @@ function renderResult() {
           { class: 'rowitem' },
           h('span', {
             class: item.ok ? 'ok' : 'bad',
-            text: item.ok ? (item.duplicate ? '已在库中' : '已入库') : '失败'
+            text: item.ok
+              ? item.duplicate
+                ? t('popup.importStatus.duplicate')
+                : t('popup.importStatus.ok')
+              : t('popup.importStatus.failed')
           }),
           h('span', { text: (item.url || '').split('/').pop() || item.reason || '' }),
           h('span', { style: 'flex:1' }),
@@ -839,7 +925,9 @@ function renderResult() {
       )
     )
   )
-  els.actions.appendChild(h('button', { class: 'btn primary', text: '关闭', onclick: () => window.close() }))
+  els.actions.appendChild(
+    h('button', { class: 'btn primary', text: t('popup.result.close'), onclick: () => window.close() })
+  )
 }
 
 function renderOffline() {
@@ -848,16 +936,18 @@ function renderOffline() {
     h(
       'div',
       { class: 'list' },
-      h('div', { class: 'rowitem bad' }, '本地素材库未运行'),
-      h('div', { class: 'rowitem' }, `已暂存待同步 ${q.count} 项`),
-      h('div', { class: 'rowitem' }, '上限 50 项 / 2 GB / 保留 7 天；超出按最早优先丢弃。'),
-      h('p', { class: 'hintline' }, '启动「FalconMM 素材库」后会自动同步进同一个 Inbox；同步成功即出队。清理浏览器数据会丢失暂存项。')
+      h('div', { class: 'rowitem bad' }, t('popup.offline.title')),
+      h('div', { class: 'rowitem' }, t('popup.offline.pending', { count: q.count })),
+      h('div', { class: 'rowitem' }, t('popup.offline.limit')),
+      h('p', { class: 'hintline' }, t('popup.offline.hint'))
     )
   )
   els.actions.appendChild(
-    h('button', { class: 'btn primary', text: '启动本地应用后重试同步', onclick: () => void doSync() })
+    h('button', { class: 'btn primary', text: t('popup.offline.retrySync'), onclick: () => void doSync() })
   )
-  els.actions.appendChild(h('button', { class: 'btn secondary', text: '关闭', onclick: () => window.close() }))
+  els.actions.appendChild(
+    h('button', { class: 'btn secondary', text: t('popup.result.close'), onclick: () => window.close() })
+  )
 }
 
 function renderPairing() {
@@ -865,8 +955,8 @@ function renderPairing() {
     h(
       'div',
       { class: 'list' },
-      h('div', { class: 'rowitem' }, '先打开 FalconMM 桌面端，再到 设置 → 浏览器插件 生成 6 位配对码'),
-      h('div', { class: 'rowitem' }, '配对码 5 分钟有效、一次性；连错 3 次锁定 10 分钟。'),
+      h('div', { class: 'rowitem' }, t('popup.pairing.intro1')),
+      h('div', { class: 'rowitem' }, t('popup.pairing.intro2')),
       h('input', {
         class: 'code',
         id: 'paircode',
@@ -886,19 +976,19 @@ function renderPairing() {
     h('button', {
       class: 'btn primary',
       id: 'pairbtn',
-      text: '配对',
+      text: t('popup.pairing.submit'),
       disabled: true,
       onclick: async (e) => {
         const code = document.getElementById('paircode')?.value || ''
         e.target.disabled = true
-        e.target.textContent = '配对中…'
+        e.target.textContent = t('popup.pairing.submitting')
         const res = await send({ type: 'pair', code })
         if (res?.ok) {
           state.status = { ...(state.status || {}), tokenSet: true }
           state.pairingError = null
           await loadMedia()
         } else {
-          state.pairingError = res?.message || '配对失败'
+          state.pairingError = res?.message || t('popup.pairing.failed')
           render()
         }
       }
@@ -968,7 +1058,11 @@ async function doCapture(captureMethod) {
   const access = await requestSiteAccess(items)
   if (!access.ok) {
     state.mode = 'permission'
-    state.error = access.error || `未获得 ${(access.origins || []).join('、') || '该站点'} 的访问权限，点击「重新尝试抓取」再授权一次`
+    state.error =
+      access.error ||
+      t('popup.permission.deniedOrigins', {
+        origins: (access.origins || []).join(t('popup.permission.originSeparator')) || t('popup.permission.thisSite')
+      })
     render()
     return
   }
@@ -1012,7 +1106,7 @@ async function doCapture(captureMethod) {
     return
   }
   if (!res?.ok) {
-    const msg = String(res?.message || '抓取失败')
+    const msg = String(res?.message || t('popup.capture.failed'))
     if (/native|host|not found|Specified native messaging host/i.test(msg) || res?.code === 50304) {
       state.mode = 'l3'
       state.error = msg
@@ -1078,7 +1172,7 @@ chrome.runtime.onMessage.addListener((message) => {
     if (v && v.ok === false && v.code === 40304) {
       await send({ type: 'unpair' }).catch(() => undefined)
       state.status.tokenSet = false
-      state.pairingError = '配对已失效（应用侧已撤销或数据已更换），请输入新的配对码'
+      state.pairingError = t('popup.pairing.expired')
       setMode('pairing')
       return
     }

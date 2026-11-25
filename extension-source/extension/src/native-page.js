@@ -24,6 +24,15 @@ import {
   tiktokCoverUrl
 } from '../lib/native-adapters.mjs'
 
+/** 带词典 key 的错误：页面脚本不携带词典（避免 bundle 膨胀），由 background 用 t(key, vars) 翻译成用户语言。 */
+function nativeError(key, vars, options = {}) {
+  const error = new Error(key)
+  error.key = key
+  error.vars = vars || {}
+  if (options.retryable !== undefined) error.retryable = options.retryable
+  return error
+}
+
 function bvidFromLocation() {
   return location.pathname.match(/\/video\/(BV[0-9A-Za-z]+)/)?.[1] || ''
 }
@@ -43,17 +52,24 @@ async function bilibiliView(bvid) {
   const res = await fetch(`https://api.bilibili.com/x/web-interface/view?bvid=${encodeURIComponent(bvid)}`, {
     credentials: 'include'
   })
-  if (!res.ok) throw new Error(`读取视频信息失败 HTTP ${res.status}`)
+  if (!res.ok) throw nativeError('native.bilibili.viewFetchFailed', { status: res.status })
   const body = await res.json()
-  if (body.code !== 0) throw new Error(body.message || '读取视频信息失败')
+  if (body.code !== 0) {
+    // 站点自己返回了错误文案就原样透传（不带 key）；没有时用带 key 的兜底文案
+    if (body.message) throw new Error(body.message)
+    throw nativeError('native.bilibili.viewFailed')
+  }
   return body.data || {}
 }
 
 async function bilibiliPlayurl(url) {
   const res = await fetch(url, { credentials: 'include' })
-  if (!res.ok) throw new Error(`读取播放地址失败 HTTP ${res.status}`)
+  if (!res.ok) throw nativeError('native.bilibili.playurlFetchFailed', { status: res.status })
   const body = await res.json()
-  if (body.code !== 0) throw new Error(body.message || '读取播放地址失败')
+  if (body.code !== 0) {
+    if (body.message) throw new Error(body.message)
+    throw nativeError('native.bilibili.playurlFailed')
+  }
   return body
 }
 
@@ -86,25 +102,23 @@ function bilibiliPreviewError(body, context) {
   const coveredSec = Math.round(bilibiliCoveredMs(body) / 1000)
   const totalSec = Math.round((Number(context.fullDurationMs) || 0) / 1000)
   const span = `${clockOf(coveredSec)} / ${clockOf(totalSec)}`
-  let message
+  let error
   if (context.upowerExclusive && !context.upowerPlay) {
-    message = `该视频是 UP 主充电专属：当前账号未充电该 UP 主，只能拿到试看部分（${span}）。请在 B 站充电后用同一账号重新下载。`
+    error = nativeError('native.bilibili.upowerExclusive', { span }, { retryable: false })
   } else if (context.vip) {
-    message = `该剧集是大会员专享：当前账号未开通大会员（或未登录），只能拿到试看部分（${span}）。开通大会员后用同一账号重新下载。`
+    error = nativeError('native.bilibili.vipExclusive', { span }, { retryable: false })
   } else if (context.paid) {
-    message = `该视频需要付费购买：当前账号没有完整观看权限，只能拿到试看部分（${span}）。购买后用同一账号重新下载。`
+    error = nativeError('native.bilibili.paidRequired', { span }, { retryable: false })
   } else {
-    message = `只拿到试看部分（${span}）：当前账号没有该视频的完整观看权限。`
+    error = nativeError('native.bilibili.previewOnly', { span }, { retryable: false })
   }
-  const error = new Error(message)
-  error.retryable = false
   return error
 }
 
 /** 把 playurl 结果转成 media（DASH 走「视频轨 + 音频轨」，由 Falcon 合并）。 */
 function bilibiliMediaFromPlayurl(body, title, context) {
   const gap = bilibiliPreviewGapMs(body, context.fullDurationMs)
-  if (gap > 0) throw new Error(bilibiliPreviewError(body, context))
+  if (gap > 0) throw bilibiliPreviewError(body, context)
 
   const dash = selectBilibiliDash(body)
   if (dash.ok) {
@@ -118,14 +132,12 @@ function bilibiliMediaFromPlayurl(body, title, context) {
 
   const parsed = parseBilibiliPlayurl(body)
   if (!parsed.ok) {
-    throw new Error(
-      parsed.hasDash
-        ? '没有从 DASH 结果里选出可下载的轨道；请刷新页面后重试'
-        : '没有拿到可下载的 MP4 地址'
-    )
+    throw parsed.hasDash
+      ? nativeError('native.bilibili.dashTrackUnavailable')
+      : nativeError('native.bilibili.noMp4')
   }
   if (parsed.parts.some((part) => /\.flv(\?|$)/i.test(part.url))) {
-    throw new Error('该视频只返回 FLV 单文件，当前素材库不支持 FLV；请改用脚本下载 MP4')
+    throw nativeError('native.bilibili.flvOnly')
   }
   return {
     media: mediaWithNames(title, parsed.parts.map((part) => ({ url: part.url, kind: 'video' }))),
@@ -154,7 +166,7 @@ async function resolveBilibiliUgc(bvid) {
     context.upowerPlay = context.upowerPlay || Boolean(view.is_upower_play)
     context.fullDurationMs = durationSec * 1000
   }
-  if (!cid) throw new Error('没有找到当前视频的 cid')
+  if (!cid) throw nativeError('native.bilibili.ugcCidNotFound')
   const body = await bilibiliPlayurl(
     `https://api.bilibili.com/x/player/playurl?bvid=${encodeURIComponent(bvid)}&cid=${cid}&${bilibiliPlayurlQuery(4048)}`
   )
@@ -182,11 +194,14 @@ async function resolveBilibiliPgc(route) {
   const res = await fetch(`https://api.bilibili.com/pgc/view/web/season?${seasonParam}`, {
     credentials: 'include'
   })
-  if (!res.ok) throw new Error(`读取剧集信息失败 HTTP ${res.status}`)
+  if (!res.ok) throw nativeError('native.bilibili.seasonFetchFailed', { status: res.status })
   const seasonBody = await res.json()
-  if (seasonBody.code !== 0) throw new Error(seasonBody.message || '读取剧集信息失败')
+  if (seasonBody.code !== 0) {
+    if (seasonBody.message) throw new Error(seasonBody.message)
+    throw nativeError('native.bilibili.seasonFailed')
+  }
   const season = parseBilibiliPgcSeason(seasonBody, epId)
-  if (!season.ok || !season.cid) throw new Error('没有找到当前剧集的 cid')
+  if (!season.ok || !season.cid) throw nativeError('native.bilibili.pgcCidNotFound')
   const episodeTitle = season.episodeTitle
   const displayTitle =
     [season.title, episodeTitle].filter(Boolean).join(' ') || document.title.replace(/\s*-\s*哔哩哔哩.*$/i, '').trim()
@@ -218,7 +233,7 @@ async function resolveBilibili() {
   const bangumi = bilibiliBangumiRoute()
   if (bangumi) return resolveBilibiliPgc(bangumi)
   const bvid = bvidFromLocation()
-  if (!bvid) throw new Error('当前页面不是 B 站视频 / 番剧页')
+  if (!bvid) throw nativeError('native.bilibili.unsupportedPage')
   return resolveBilibiliUgc(bvid)
 }
 
@@ -273,7 +288,7 @@ function readDouyinPlayerMedia() {
 function resolveDouyin() {
   let parsed = parseDouyinRouterData(readDouyinPlayerMedia())
   if (!parsed.ok) parsed = parseDouyinRouterData(douyinRouterData())
-  if (!parsed.ok) throw new Error('没有读取到当前抖音作品数据（播放器与页面数据都为空）；请先播放一次或刷新页面再试')
+  if (!parsed.ok) throw nativeError('native.douyin.noData')
   const title = parsed.title || 'douyin'
   // 正在播放的 <video>.currentSrc 是浏览器刚解析出的 CDN 直链，比播放器数据里的
   // playApi 包装地址更新鲜（playApi 过期会 403/空响应）。拿到就直接排为首选。
@@ -315,11 +330,9 @@ function resolveXiaohongshu() {
   const state = window.__INITIAL_STATE__ || window.__INITIAL_SSR_STATE__ || null
   const parsed = parseXiaohongshuState(state, xhsNoteIdFromLocation())
   if (!parsed.ok) {
-    throw new Error(
-      parsed.reason === 'video_url_missing'
-        ? '识别到视频笔记，但页面还没给出视频地址；请先播放一次再试（不会把封面当视频下载）'
-        : '没有读取到当前小红书笔记数据；请刷新页面或先播放一次再试'
-    )
+    throw parsed.reason === 'video_url_missing'
+      ? nativeError('native.xiaohongshu.videoUrlMissing')
+      : nativeError('native.xiaohongshu.noData')
   }
   const title = parsed.title || 'xiaohongshu'
   return {
@@ -358,30 +371,30 @@ async function youtubePlayerFromAndroid(videoId) {
       context: { client: { clientName: 'ANDROID', clientVersion: '19.09.37', androidSdkVersion: 30, hl: 'en' } }
     })
   })
-  if (!res.ok) throw new Error(`读取 YouTube 播放数据失败 HTTP ${res.status}`)
+  if (!res.ok) throw nativeError('native.youtube.playerFetchFailed', { status: res.status })
   return res.json()
 }
 
 function youtubeError(parsed) {
-  const detail = parsed?.detail ? `：${parsed.detail}` : ''
-  let message
+  let error
   if (parsed?.reason === 'login_required') {
-    message = '该视频需要登录观看（私密或年龄限制），请在浏览器登录后重试'
+    error = nativeError('native.youtube.loginRequired', undefined, { retryable: false })
   } else if (parsed?.reason === 'needs_decipher') {
-    message = '当前只拿到需要站点签名解码的视频流（signatureCipher），插件不逆向签名；请刷新页面后重试，或稍后再试'
+    error = nativeError('native.youtube.needsDecipher')
   } else if (parsed?.reason === 'unplayable') {
-    message = `该视频无法播放${detail}，请确认视频可正常观看后重试`
+    // 可选原因不拼进变量：带 / 不带原因各一个 key，标点交给各语言词典
+    error = parsed.detail
+      ? nativeError('native.youtube.unplayableWithReason', { reason: parsed.detail })
+      : nativeError('native.youtube.unplayable')
   } else {
-    message = '没有拿到可下载的视频流；请先播放一次再试'
+    error = nativeError('native.youtube.noStream')
   }
-  const error = new Error(message)
-  if (parsed?.reason === 'login_required') error.retryable = false
   return error
 }
 
 async function resolveYouTube() {
   const videoId = youtubeVideoId()
-  if (!videoId) throw new Error('当前页面不是 YouTube 视频页')
+  if (!videoId) throw nativeError('native.youtube.unsupportedPage')
   // 1) watch 页自带的 player response：若有明文 url 流直接用（含标题，省一次 API 调用）
   let parsed = parseYoutubePlayerResponse(window.ytInitialPlayerResponse || null)
   if (!parsed.ok) {
@@ -432,13 +445,9 @@ async function resolveTikTok() {
   let parsed = parseTikTokRehydration(tiktokRehydrationPayload())
   if (!parsed.ok) parsed = parseTikTokLegacy(tiktokLegacyPayload())
   if (!parsed.ok) {
-    const error = new Error(
-      parsed.reason === 'private'
-        ? '该 TikTok 作品是私密内容或已被删除，无法下载'
-        : '没有读取到当前 TikTok 作品数据；请先播放一次或刷新页面再试'
-    )
-    if (parsed.reason === 'private') error.retryable = false
-    throw error
+    throw parsed.reason === 'private'
+      ? nativeError('native.tiktok.private', undefined, { retryable: false })
+      : nativeError('native.tiktok.noData')
   }
   const title = parsed.title || 'tiktok'
   // 正在播放的 video.currentSrc 是刚解析出的 CDN 直链，比页面数据里的地址更新鲜
@@ -460,13 +469,16 @@ async function resolveTikTok() {
 async function resolveTwitter() {
   // 支持 /:user/status/:id 与 /i/web/status/:id（x.com 与 twitter.com）
   const statusId = location.pathname.match(/\/status(?:es)?\/(\d+)/)?.[1]
-  if (!statusId) throw new Error('当前页面不是 X (Twitter) 单条推文页；请打开具体推文后重试')
+  if (!statusId) throw nativeError('native.twitter.unsupportedPage')
   // 嵌入组件公共端点：公开推文免登录，页面上下文 fetch 无 CORS 阻碍
   const res = await fetch(`https://cdn.syndication.twimg.com/tweet-result?id=${statusId}&token=x&lang=en`)
-  if (!res.ok) throw new Error(`读取推文数据失败 HTTP ${res.status}`)
+  if (!res.ok) throw nativeError('native.twitter.tweetFetchFailed', { status: res.status })
   const parsed = parseTwitterTweetResult(await res.json())
   if (!parsed.ok) {
-    throw new Error(parsed.reason === 'no_media' ? '这条推文没有可下载的视频或图片' : `读取推文媒体失败${parsed.detail ? `：${parsed.detail}` : ''}`)
+    if (parsed.reason === 'no_media') throw nativeError('native.twitter.noMedia')
+    throw parsed.detail
+      ? nativeError('native.twitter.mediaFailedWithReason', { reason: parsed.detail })
+      : nativeError('native.twitter.mediaFailed')
   }
   const title = parsed.title || `tweet-${statusId}`
   return {
@@ -504,7 +516,7 @@ function ogMetaContent(name) {
 
 function resolveInstagram() {
   const shortcode = instagramShortcode()
-  if (!shortcode) throw new Error('当前页面不是 Instagram 帖子 / Reels 页')
+  if (!shortcode) throw nativeError('native.instagram.unsupportedPage')
   let parsed = parseInstagramWebInfo(instagramEmbeddedWebInfo(), shortcode)
   if (!parsed.ok) {
     // og 元标签兜底：公开帖未登录也能拿到的最小信息
@@ -515,13 +527,9 @@ function resolveInstagram() {
     })
   }
   if (!parsed.ok) {
-    const error = new Error(
-      parsed.reason === 'video_url_missing'
-        ? '识别到视频帖，但页面还没有给出视频地址；请先播放一次或刷新后重试'
-        : '没有读取到该 Instagram 帖子的媒体数据；请确认帖子是公开内容、已登录，然后刷新重试'
-    )
-    error.retryable = parsed.reason === 'video_url_missing'
-    throw error
+    throw parsed.reason === 'video_url_missing'
+      ? nativeError('native.instagram.videoUrlMissing')
+      : nativeError('native.instagram.noData', undefined, { retryable: false })
   }
   const title = parsed.title || `instagram-${shortcode}`
   return {
@@ -542,22 +550,18 @@ function vimeoClipId() {
 
 async function resolveVimeo() {
   const clipId = vimeoClipId()
-  if (!clipId) throw new Error('当前页面不是 Vimeo 视频页')
+  if (!clipId) throw nativeError('native.vimeo.unsupportedPage')
   let payload = window.playerConfig || null
   if (!payload) {
     const res = await fetch(`https://player.vimeo.com/video/${clipId}/config`, { credentials: 'omit' })
-    if (!res.ok) throw new Error(`读取 Vimeo 播放配置失败 HTTP ${res.status}`)
+    if (!res.ok) throw nativeError('native.vimeo.configFetchFailed', { status: res.status })
     payload = await res.json()
   }
   const parsed = parseVimeoConfig(payload)
   if (!parsed.ok) {
-    const error = new Error(
-      parsed.reason === 'dash_only'
-        ? '该视频只提供 DASH/HLS 自适应流（无 MP4 直链），当前不支持下载；换公开的 MP4 视频可下载'
-        : '没有拿到可下载的 Vimeo 视频地址；请确认视频公开可播放'
-    )
-    if (parsed.reason === 'dash_only') error.retryable = false
-    throw error
+    throw parsed.reason === 'dash_only'
+      ? nativeError('native.vimeo.dashOnly', undefined, { retryable: false })
+      : nativeError('native.vimeo.noUrl')
   }
   const title = parsed.title || `vimeo-${clipId}`
   return {
@@ -589,10 +593,10 @@ window.__falconResolveNative = async () => {
       return await resolveInstagram()
     }
     if (host === 'vimeo.com' || host.endsWith('.vimeo.com')) return await resolveVimeo()
-    return { ok: false, message: '当前页面不是受支持的站点页面' }
+    return { ok: false, message: 'native.unsupportedSite', key: 'native.unsupportedSite' }
   } catch (e) {
     // retryable=false：权限类失败（登录/版权/私密内容），重新解析页面也不会变
-    return { ok: false, message: String(e?.message || e), retryable: e?.retryable !== false }
+    return { ok: false, message: String(e?.message || e), key: e?.key, vars: e?.vars, retryable: e?.retryable !== false }
   }
 }
 

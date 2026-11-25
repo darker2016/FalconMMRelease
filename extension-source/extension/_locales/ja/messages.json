@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "FalconMM Inbox"
+  },
+  "extDesc": {
+    "message": "現在のページの画像・動画や、Bilibili・YouTube・TikTok など対応サイトの動画を、ローカルの FalconMM ライブラリに保存します。外部には送信されません。"
+  },
+  "extActionTitle": {
+    "message": "FalconMM Inbox にキャプチャ"
+  }
+}

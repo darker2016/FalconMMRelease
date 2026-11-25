@@ -438,3 +438,33 @@ button.ghost {
   font-size: 12px;
   line-height: 1.6;
 }
+
+/* ── RTL（阿拉伯语等从右到左界面）──
+   flex / grid 的排列顺序随 dir 自动镜像，这里只翻转绝对定位与外边距；
+   域名、文件名、配对码保持从左到右，避免被双向算法拆段重排。 */
+[dir='rtl'] .conn {
+  margin-left: 0;
+  margin-right: auto;
+}
+[dir='rtl'] .card .check {
+  left: auto;
+  right: 6px;
+}
+[dir='rtl'] .card .video-badge,
+[dir='rtl'] .card .blocked-tag {
+  right: auto;
+  left: 6px;
+}
+[dir='rtl'] .card .copy-link {
+  left: auto;
+  right: 6px;
+}
+[dir='rtl'] .mono,
+[dir='rtl'] .card .name,
+[dir='rtl'] .code {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+[dir='rtl'] .card .name {
+  text-align: right;
+}

@@ -51,11 +51,11 @@
 </nav>
 <h1>FalconMM 사용 가이드</h1>
 <p>FalconMM은 로컬 우선 미디어 라이브러리입니다. 스크린샷, 화면 녹화, 브라우저 캡처를 받은 편지함에서 검토하고, 태그 트리로 자료를 정리합니다. 선택적으로 비전 모델(VLM)을 연결해 자동으로 태그를 붙이거나, MCP를 통해 AI 어시스턴트가 라이브러리를 검색할 수 있습니다.</p>
-<p class="version-line">한국어 · v0.4.0 · <a href="https://github.com/darker2016/FalconMMRelease/releases">다운로드</a> · <a href="UserGuide.html">모든 언어</a></p>
+<p class="version-line">한국어 · v0.4.1 · <a href="https://github.com/darker2016/FalconMMRelease/releases">다운로드</a> · <a href="UserGuide.html">모든 언어</a></p>
 <h3>1. 설치</h3>
 <ul>
-  <li><b>macOS</b>: <code>FalconMM-0.4.0-arm64.dmg</code>(Apple 실리콘) 또는 <code>FalconMM-0.4.0-x64.dmg</code>(Intel)를 내려받아 열고 FalconMM을 '응용 프로그램'으로 드래그해요. 빌드가 공증되지 않았기 때문에 처음 열 때 macOS가 물으면 <b>오른쪽 클릭 → 열기</b>를 선택해요(또는 '시스템 설정 → 개인정보 보호 및 보안'에서 '확인 없이 열기'를 눌러요).</li>
-  <li><b>Windows</b>: <code>FalconMM-Setup-0.4.0.exe</code>를 내려받아 마법사에 따라 설치해요.</li>
+  <li><b>macOS</b>: <code>FalconMM-0.4.1-arm64.dmg</code>(Apple 실리콘) 또는 <code>FalconMM-0.4.1-x64.dmg</code>(Intel)를 내려받아 열고 FalconMM을 '응용 프로그램'으로 드래그해요. 빌드가 공증되지 않았기 때문에 처음 열 때 macOS가 물으면 <b>오른쪽 클릭 → 열기</b>를 선택해요(또는 '시스템 설정 → 개인정보 보호 및 보안'에서 '확인 없이 열기'를 눌러요).</li>
+  <li><b>Windows</b>: <code>FalconMM-Setup-0.4.1.exe</code>를 내려받아 마법사에 따라 설치해요.</li>
   <li>첫 실행 시 라이브러리 폴더(기본값 <code>~/Documents/FalconMM素材库</code>)가 만들어지고, 데이터베이스와 소재는 모두 이 컴퓨터에 저장돼요.</li>
 </ul>
 <h3>2. 인터페이스 언어</h3>
@@ -68,10 +68,11 @@
 </ul>
 <h3>4. 브라우저 확장</h3>
 <ol>
-  <li><code>FalconMM-Extension-0.4.0.zip</code>을 내려받아 <b>압축을 풀어요</b>. <code>chrome://extensions</code>(Edge는 <code>edge://extensions</code>)를 연 뒤 '개발자 모드'를 켜고 → '압축해제된 확장 프로그램을 로드합니다' → 압축을 푼 <code>extension</code> 폴더를 선택해요.</li>
+  <li><code>FalconMM-Extension-0.4.1.zip</code>을 내려받아 <b>압축을 풀어요</b>. <code>chrome://extensions</code>(Edge는 <code>edge://extensions</code>)를 연 뒤 '개발자 모드'를 켜고 → '압축해제된 확장 프로그램을 로드합니다' → 압축을 푼 <code>extension</code> 폴더를 선택해요.</li>
   <li>확장 아이콘을 눌러 안내에 따라 FalconMM과 페어링해요(설정 → 브라우저 확장 → 페어링 코드 생성).</li>
   <li>웹 페이지에서 팝업을 열면 이미지 / 동영상을 수신함으로 가져와요. 지원 사이트의 동영상은 '현재 동영상 다운로드'로 바로 내려받을 수 있어요.</li>
 </ol>
+<p>확장 프로그램 화면은 브라우저의 UI 언어를 따라요(같은 11개 언어를 지원하고, 지원하지 않는 언어에서는 영어로 표시되고, 아랍어는 오른쪽에서 왼쪽 레이아웃을 사용해요).</p>
 <p><b>지원 사이트</b>: Bilibili, Douyin, Xiaohongshu(RedNote), YouTube, TikTok, X (Twitter), Instagram, Vimeo. 국제 사이트는 네트워크에서 해당 사이트에 접속할 수 있어야 해요. YouTube / TikTok / X / Instagram / Vimeo에는 Tampermonkey 대체 스크립트가 없어서 파싱이 실패하면 구체적인 이유를 알려줘요. IQiYi / Youku / Tencent Video / MangoTV는 DRM으로 보호되기 때문에 다운로드를 지원하지 않아요.</p>
 <h3>5. 자주 쓰는 기능</h3>
 <ul>
